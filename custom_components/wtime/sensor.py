@@ -17,6 +17,7 @@ SENSORS = {
     "week_and_date": {"format": "%a, %B %d, %Y", "icon": "mdi:calendar-range"},
     "jewish_week_date": {"format": None, "icon": "mdi:star-david"},
     "jewish_week_date_full": {"format": None, "icon": "mdi:star-david"},
+    "dst_status": {"format": None, "icon": "mdi:clock-alert"},
 }
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
@@ -53,6 +54,11 @@ class WtimeSensor(SensorEntity):
                 "פרייטאג",
                 "שבת קודש",
             ][datetime.now().weekday()]
+        elif self._attr_name == "Dst Status":
+            if datetime.now().timetuple().tm_isdst == 1:
+                return "After DST"
+            else:
+                return "Before DST"
         else:
             return datetime.now().strftime(self._format)
 
