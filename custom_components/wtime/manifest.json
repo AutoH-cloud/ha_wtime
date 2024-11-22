@@ -10,3 +10,21 @@
     "config_flow": true
     "config_entry_type": "single",
 }
+
+
+{
+    "domain": "wtime",
+    "name": "Wtime",
+    "version": "1.0.0",
+    "documentation": "https://github.com/AutoH-cloud/ha_wdate",
+    "requirements": [],
+    "dependencies": [],
+    "codeowners": ["@autoh.cloud"],
+    "iot_class": "local_polling",
+    "config_flow": true,
+    "config_entry_type": "single",
+    "icons": {
+        "icon": "custom_components/wtime/static/icon.png",
+        "logo": "custom_components/wtime/static/logo.png"
+    }
+}
