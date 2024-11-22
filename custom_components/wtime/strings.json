@@ -1,0 +1,11 @@
+{
+    "title": "Wtime",
+    "config": {
+        "step": {
+            "user": {
+                "title": "Wtime Configuration",
+                "description": "No configuration needed. Click Submit to add."
+            }
+        }
+    }
+}
