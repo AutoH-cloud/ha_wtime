@@ -15,8 +15,8 @@ SENSORS = {
     "week_day_long": {"format": "%A", "icon": "mdi:calendar-today"},
     "week_day_short": {"format": "%a", "icon": "mdi:calendar-today"},
     "week_and_date": {"format": "%a, %B %d, %Y", "icon": "mdi:calendar-range"},
-    "jewish_calendar_week_date": {"format": None, "icon": "mdi:star-david"},
-    "jewish_calendar_week_date_full": {"format": None, "icon": "mdi:star-david"},
+    "jewish_week_date": {"format": None, "icon": "mdi:star-david"},
+    "jewish_week_date_full": {"format": None, "icon": "mdi:star-david"},
 }
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
@@ -39,11 +39,11 @@ class WtimeSensor(SensorEntity):
     @property
     def native_value(self):
         """Return the state of the sensor."""
-        if self._attr_name == "Jewish Calendar Week Date":
+        if self._attr_name == "Jewish Week Date":
             return ["א", "'ב", "'ג", "'ד", "'ה", "'ו", "שבת'"][
                 datetime.now().weekday()
             ]
-        elif self._attr_name == "Jewish Calendar Week Date Full":
+        elif self._attr_name == "Jewish Week Date Full":
             return [
                 "זונטאג",
                 "מאנטאג",
