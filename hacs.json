@@ -1,0 +1,5 @@
+{
+  "name": "WTime Sensors",
+  "description": "Custom integration for DST status and date/time sensors",
+  "render_readme": true
+}
