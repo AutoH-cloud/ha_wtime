@@ -18,8 +18,3 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Unload Wtime config entry."""
     await hass.config_entries.async_forward_entry_unload(entry, "sensor")
     return True
-
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
-    """Unload Wtime config entry."""
-    return await hass.config_entries.async_forward_entry_unload(entry, "sensor")
-
