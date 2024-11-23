@@ -1,23 +1,19 @@
-from homeassistant.helpers.entity import Entity
 from datetime import datetime
+from homeassistant.components.sensor import SensorEntity
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Set up the DST sensor."""
     async_add_entities([DSTSensor()])
 
 
-class DSTSensor(Entity):
+class DSTSensor(SensorEntity):
     """Sensor to check if DST is active."""
 
     def __init__(self):
-        self._state = None
-        self._name = "DST Status"
+        """Initialize the DST sensor."""
+        self._attr_name = "DST Status"
 
     @property
-    def name(self):
-        return self._name
-
-    @property
-    def state(self):
+    def native_value(self):
+        """Return the current DST status."""
         return "After DST" if datetime.now().timetuple().tm_isdst == 1 else "Before DST"
-
