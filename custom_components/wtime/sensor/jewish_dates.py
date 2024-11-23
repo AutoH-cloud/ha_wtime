@@ -1,49 +1,53 @@
 from datetime import datetime
-from homeassistant.helpers.entity import Entity
+from homeassistant.components.sensor import SensorEntity
 
-# Helper function for Jewish Weekday
+
 def jewish_weekday():
-    todayyid = ["א", "'ב", "'ג", "'ד", "'ה", "'ו", "שבת"]
+    """Get the Jewish weekday (short form)."""
+    todayyid = ["א", "ב", "ג", "ד", "ה", "ו", "שבת"]
     return todayyid[datetime.now().weekday()]
 
-# Helper function for Jewish Full Weekday
+
 def jewish_weekday_full():
-    todayyid_full = ["זונטאג", "מאנטאג", "דינסטאג", "מיטוואך", "דאנערשטיג", "פרייטאג", "שבת קודש"]
+    """Get the Jewish weekday (full form)."""
+    todayyid_full = [
+        "זונטאג",
+        "מאנטאג",
+        "דינסטאג",
+        "מיטוואך",
+        "דאנערשטיג",
+        "פרייטאג",
+        "שבת קודש",
+    ]
     return todayyid_full[datetime.now().weekday()]
 
+
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-    """Set up the Jewish Dates sensor."""
+    """Set up the Jewish Dates sensors."""
     async_add_entities([JewishWeekdaySensor(), JewishWeekdayFullSensor()])
 
 
-class JewishWeekdaySensor(Entity):
-    """Sensor for Jewish weekday name."""
+class JewishWeekdaySensor(SensorEntity):
+    """Sensor to display the Jewish weekday (short form)."""
 
     def __init__(self):
-        self._state = None
-        self._name = "Jewish Weekday"
+        """Initialize the sensor."""
+        self._attr_name = "Jewish Weekday"
 
     @property
-    def name(self):
-        return self._name
-
-    @property
-    def state(self):
+    def native_value(self):
+        """Return the current Jewish weekday (short)."""
         return jewish_weekday()
 
 
-class JewishWeekdayFullSensor(Entity):
-    """Sensor for Jewish full weekday name."""
+class JewishWeekdayFullSensor(SensorEntity):
+    """Sensor to display the Jewish weekday (full form)."""
 
     def __init__(self):
-        self._state = None
-        self._name = "Jewish Full Weekday"
+        """Initialize the sensor."""
+        self._attr_name = "Jewish Full Weekday"
 
     @property
-    def name(self):
-        return self._name
-
-    @property
-    def state(self):
+    def native_value(self):
+        """Return the current Jewish weekday (full)."""
         return jewish_weekday_full()
-
