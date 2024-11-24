@@ -1,20 +1,19 @@
+"""The Wtime integration."""
+
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import discovery
 
 DOMAIN = "wtime"
 
 async def async_setup(hass: HomeAssistant, config: dict):
-    """Set up Wtime from configuration.yaml (not used for UI)."""
+    """Set up the WTime integration."""
+    # This would allow the discovery process to be handled
     return True
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
-    """Set up Wtime from a config entry."""
-    hass.async_create_task(
-        hass.config_entries.async_forward_entry_setup(entry, "sensor")
-    )
-    return True
-
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
-    """Unload Wtime config entry."""
-    await hass.config_entries.async_forward_entry_unload(entry, "sensor")
+    """Set up WTime from a config entry."""
+    # Register your sensors here or call async_setup_entry for each sensor
+    from .sensor import async_setup_entry as setup_sensors
+    await setup_sensors(hass, entry, async_add_entities)
     return True
