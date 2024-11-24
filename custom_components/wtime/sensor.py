@@ -1,5 +1,6 @@
 from datetime import datetime
 from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import TimeSensorEntity  # Import TimeSensorEntity if available
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
@@ -66,6 +67,9 @@ class WtimeSensor(SensorEntity):
                 return "After DST"
             else:
                 return "Before DST"
+        elif self._attr_name == "Time":
+            # Return the current time for the time sensor
+            return datetime.now().strftime(self._format)
         else:
             return datetime.now().strftime(self._format)
 
