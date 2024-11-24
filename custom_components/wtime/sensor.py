@@ -13,7 +13,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     async_add_entities([WTimeAstronomicalSensor(entry.entry_id)])
 
 class WTimeAstronomicalSensor(SensorEntity):
-    """Representation of an astronomical time sensor."""
+    """Representation of an astronomical event sensor."""
 
     def __init__(self, entry_id):
         self._attr_name = "Next Astronomical Event"
@@ -23,11 +23,11 @@ class WTimeAstronomicalSensor(SensorEntity):
 
     @property
     def native_value(self):
-        """Return the next astronomical event."""
+        """Return the state."""
         return self._state
 
     async def async_update(self):
-        """Update the sensor to show the next astronomical event."""
+        """Update the sensor state."""
         now = datetime.now()
         events = ["sunrise", "sunset", "dawn", "dusk"]
         next_events = {
