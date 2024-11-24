@@ -1,108 +1,37 @@
-# custom_components/WTime/sensor.py
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from .const import SENSORS
+from homeassistant.util.dt import get_astral_event_date
+from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
     """Set up WTime sensors."""
-    _LOGGER.debug("Setting up WTime sensors")
-    async_add_entities(
-        WTimeSensor(name, data, entry.entry_id) for name, data in SENSORS.items()
-    )
+    async_add_entities([WTimeAstronomicalSensor(entry.entry_id)])
 
-class WTimeSensor(SensorEntity):
-    """Representation of a WTime sensor."""
+class WTimeAstronomicalSensor(SensorEntity):
+    """Representation of an astronomical time sensor."""
 
-    def __init__(self, name, data, entry_id):
-        self._attr_name = name.replace("_", " ").title()  # Set name with spaces
-        self._attr_unique_id = f"{entry_id}_{name}"
-        self._format = data["format"]
-        self._attr_icon = data["icon"]
+    def __init__(self, entry_id):
+        self._attr_name = "Next Astronomical Event"
+        self._attr_unique_id = f"{entry_id}_astronomical_event"
         self._state = None
+        self._next_event = None
 
     @property
     def native_value(self):
-        """Return the state of the sensor."""
-        jewish_weekdays = ["א'", "ב'", "ג'", "ד'", "ה'", "ו'", "שבת"]
-        jewish_weekdays_full = [
-            "זונטאג", "מאנטאג", "דינסטאג", "מיטוואך", "דאנערשטיג", "פרייטאג", "שבת קודש",
-        ]
-        months = [
-            "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December",
-        ]
-        seasons = ["Winter", "Spring", "Summer", "Fall"]
-        weekdays_short = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-        weekdays_long = [
-            "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
-        ]
-
-        now = datetime.now()
-        month = now.month
-        weekday = (now.weekday() + 1) % 7  # Adjust for Sunday as the start of the week.
-
-        # Determine the current season based on the month
-        if month in [12, 1, 2]:
-            season = "Winter"
-        elif month in [3, 4, 5]:
-            season = "Spring"
-        elif month in [6, 7, 8]:
-            season = "Summer"
-        else:
-            season = "Fall"
-
-        _LOGGER.debug(f"Returning state for {self._attr_name}")
-
-        # Return the correct value based on the sensor type
-        if self._attr_name == "Wtime Jewish Week Date":
-            return jewish_weekdays[weekday]
-        elif self._attr_name == "Wtime Jewish Week Date Full":
-            return jewish_weekdays_full[weekday]
-        elif self._attr_name == "Wtime Week Day Long":
-            return weekdays_long[weekday]
-        elif self._attr_name == "Wtime Week Day Short":
-            return weekdays_short[weekday]
-        elif self._attr_name == "Wtime Current Month":
-            return months[month - 1]
-        elif self._attr_name == "Wtime Current Season":
-            return season
-        else:
-            return now.strftime(self._format)
-
-    @property
-    def extra_state_attributes(self):
-        """Return additional attributes for dropdown support."""
-        jewish_weekdays = ["א", "ב", "ג", "ד", "ה", "ו", "שבת"]
-        jewish_weekdays_full = [
-            "זונטאג", "מאנטאג", "דינסטאג", "מיטוואך", "דאנערשטיג", "פרייטאג", "שבת קודש",
-        ]
-        months = [
-            "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December",
-        ]
-        seasons = ["Winter", "Spring", "Summer", "Fall"]
-        weekdays_short = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-        weekdays_long = [
-            "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
-        ]
-
-        if self._attr_name == "WTime Jewish Week Date":
-            return {"options": jewish_weekdays}
-        elif self._attr_name == "WTime Jewish Week Date Full":
-            return {"options": jewish_weekdays_full}
-        elif self._attr_name == "WTime Week Day Long":
-            return {"options": weekdays_long}
-        elif self._attr_name == "WTime Week Day Short":
-            return {"options": weekdays_short}
-        elif self._attr_name == "WTime Current Month":
-            return {"options": months}
-        elif self._attr_name == "WTime Current Season":
-            return {"options": seasons}
-        return {}
+        """Return the next astronomical event."""
+        return self._state
 
     async def async_update(self):
-        """Update the sensor state."""
-        self._state = self.native_value
+        """Update the sensor to show the next astronomical event."""
+        now = datetime.now()
+        events = ["sunrise", "sunset", "dawn", "dusk"]
+        next_events = {
+            event: get_astral_event_date(self.hass, event, now) for event in events
+        }
+        self._next_event = min(next_events, key=lambda k: next_events[k])
+        self._state = f"{self._next_event.capitalize()} at {next_events[self._next_event].time()}"
