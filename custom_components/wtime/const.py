@@ -1,5 +1,4 @@
-# const.py
-
+# custom_components/WTime/const.py
 # Domain for the integration
 DOMAIN = "WTime"
 
