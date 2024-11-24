@@ -26,8 +26,7 @@ class WtimeSensor(SensorEntity):
     """Representation of a WTime sensor."""
 
     def __init__(self, name, data, entry_id):
-        # Update friendly name with "WTime" prefix
-        self._attr_name = f"WTime {name.replace('_', ' ').title()}"
+        self._attr_name = name.replace("_", " ").title()
         self._attr_unique_id = f"{entry_id}_{name}"
         self._format = data["format"]
         self._attr_icon = data["icon"]
@@ -62,15 +61,15 @@ class WtimeSensor(SensorEntity):
         else:
             season = "Fall"
 
-        if self._attr_name == "WTime Jewish Week Date":
+        if self._attr_name == "Wtime Jewish Week Date":
             return jewish_weekdays_short[weekday]
-        elif self._attr_name == "WTime Week Day":
+        elif self._attr_name == "Wtime Week Day":
             return weekdays_long[weekday]
-        elif self._attr_name == "WTime Week Day Short":
+        elif self._attr_name == "Wtime Week Day Short":
             return weekdays_short[weekday]
-        elif self._attr_name == "WTime Current Month":
+        elif self._attr_name == "Wtime Current Month":
             return months[month - 1]
-        elif self._attr_name == "WTime Current Season":
+        elif self._attr_name == "Wtime Current Season":
             return season
         else:
             return now.strftime(self._format)
@@ -90,15 +89,15 @@ class WtimeSensor(SensorEntity):
             "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
         ]
 
-        if self._attr_name == "WTime Jewish Week Date":
+        if self._attr_name == "Wtime Jewish Week Date":
             return {"options": jewish_weekdays_short}
-        elif self._attr_name == "WTime Week Day":
+        elif self._attr_name == "Wtime Week Day":
             return {"options": weekdays_long}
-        elif self._attr_name == "WTime Week Day Short":
+        elif self._attr_name == "Wtime Week Day Short":
             return {"options": weekdays_short}
-        elif self._attr_name == "WTime Current Month":
+        elif self._attr_name == "Wtime Current Month":
             return {"options": months}
-        elif self._attr_name == "WTime Current Season":
+        elif self._attr_name == "Wtime Current Season":
             return {"options": seasons}
         return None
 
