@@ -8,7 +8,7 @@ class WtimeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(self, user_input=None):
         """Handle the user input during configuration."""
-        # Check if an entry already exists for this domain, abort if so
+        # Check if an entry already exists, abort if so
         if self._async_current_entries():
             return self.async_abort(reason="single_instance_allowed")
         
