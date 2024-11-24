@@ -36,4 +36,3 @@ class DSTBinarySensor(BinarySensorEntity):
         # Since `is_on` is calculated dynamically based on the current time,
         # there's no need to update the state separately.
         pass
-
