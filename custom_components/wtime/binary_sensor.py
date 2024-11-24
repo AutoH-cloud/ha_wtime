@@ -2,13 +2,14 @@
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from datetime import datetime
+from datetime import datetime, timedelta
 from .const import DOMAIN
 
 class WTimeDSTBinarySensor(BinarySensorEntity):
     """Representation of a WTime DST binary sensor."""
 
     def __init__(self, entry_id: str):
+        """Initialize the DST binary sensor."""
         self._attr_name = "DST Active"
         self._attr_unique_id = f"{entry_id}_dst_active"
         self._attr_is_on = self._check_dst()
