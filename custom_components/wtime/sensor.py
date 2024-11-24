@@ -1,24 +1,12 @@
+# custom_components/WTime/sensor.py
 import logging
 from datetime import datetime
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from .const import SENSORS
 
 _LOGGER = logging.getLogger(__name__)
-
-DOMAIN = "WTime"
-
-SENSORS = {
-    "wtime_date": {"format": "%B %d, %Y", "icon": "mdi:calendar"},
-    "wtime_date_numbers": {"format": "%x", "icon": "mdi:numeric"},
-    "wtime_time": {"format": "%-I:%M %p", "icon": "mdi:clock"},
-    "wtime_week_day_long": {"format": "%A", "icon": "mdi:calendar-today"},
-    "wtime_week_day_short": {"format": "%a", "icon": "mdi:calendar-today"},
-    "wtime_current_month": {"format": "%B", "icon": "mdi:calendar-month"},
-    "wtime_current_season": {"format": None, "icon": "mdi:weather-partly-cloudy"},
-    "wtime_jewish_week_date": {"format": None, "icon": "mdi:star-david"},
-    "wtime_jewish_week_date_full": {"format": None, "icon": "mdi:star-david"},
-}
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
     """Set up WTime sensors."""
@@ -114,3 +102,7 @@ class WTimeSensor(SensorEntity):
         elif self._attr_name == "WTime Current Season":
             return {"options": seasons}
         return {}
+
+    async def async_update(self):
+        """Update the sensor state."""
+        self._state = self.native_value
