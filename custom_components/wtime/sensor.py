@@ -30,7 +30,7 @@ class WTimeSensor(SensorEntity):
     """Representation of a Wtime sensor."""
 
     def __init__(self, name, data, entry_id):
-        self._attr_name = name.replace("_", " ").title()
+        self._attr_name = name.replace("_", " ").title()  # Set name with spaces
         self._attr_unique_id = f"{entry_id}_{name}"
         self._format = data["format"]
         self._attr_icon = data["icon"]
@@ -41,17 +41,10 @@ class WTimeSensor(SensorEntity):
         """Return the state of the sensor."""
         jewish_weekdays = ["א'", "ב'", "ג'", "ד'", "ה'", "ו'", "שבת"]
         jewish_weekdays_full = [
-            "זונטאג",
-            "מאנטאג",
-            "דינסטאג",
-            "מיטוואך",
-            "דאנערשטיג",
-            "פרייטאג",
-            "שבת קודש",
+            "זונטאג", "מאנטאג", "דינסטאג", "מיטוואך", "דאנערשטיג", "פרייטאג", "שבת קודש",
         ]
         months = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December",
+            "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December",
         ]
         seasons = ["Winter", "Spring", "Summer", "Fall"]
         weekdays_short = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -75,6 +68,7 @@ class WTimeSensor(SensorEntity):
 
         _LOGGER.debug(f"Returning state for {self._attr_name}")
 
+        # Return the correct value based on the sensor type
         if self._attr_name == "Wtime Jewish Week Date":
             return jewish_weekdays[weekday]
         elif self._attr_name == "Wtime Jewish Week Date Full":
@@ -95,17 +89,10 @@ class WTimeSensor(SensorEntity):
         """Return additional attributes for dropdown support."""
         jewish_weekdays = ["א", "ב", "ג", "ד", "ה", "ו", "שבת"]
         jewish_weekdays_full = [
-            "זונטאג",
-            "מאנטאג",
-            "דינסטאג",
-            "מיטוואך",
-            "דאנערשטיג",
-            "פרייטאג",
-            "שבת קודש",
+            "זונטאג", "מאנטאג", "דינסטאג", "מיטוואך", "דאנערשטיג", "פרייטאג", "שבת קודש",
         ]
         months = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December",
+            "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December",
         ]
         seasons = ["Winter", "Spring", "Summer", "Fall"]
         weekdays_short = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -125,7 +112,7 @@ class WTimeSensor(SensorEntity):
             return {"options": months}
         elif self._attr_name == "WTime Current Season":
             return {"options": seasons}
-        return None
+        return {}
 
     async def async_update(self):
         """Update the sensor state."""
