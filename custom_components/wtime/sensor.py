@@ -7,16 +7,16 @@ from homeassistant.core import HomeAssistant
 DOMAIN = "wtime"
 
 SENSORS = {
-    "date": {"format": "%B %d, %Y", "icon": "mdi:calendar"},
-    "date_numbers": {"format": "%x", "icon": "mdi:numeric"},
-    "time": {"format": "%-I:%M %p", "icon": "mdi:clock"},
-    "date_time": {"format": "%B %d, %Y - %-I:%M %p", "icon": "mdi:calendar-clock"},
-    "week_day_long": {"format": "%A", "icon": "mdi:calendar-today"},
-    "week_day_short": {"format": "%a", "icon": "mdi:calendar-today"},
-    "current_month": {"format": "%B", "icon": "mdi:calendar-month"},
-    "current_season": {"format": None, "icon": "mdi:weather-partly-cloudy"},
-    "jewish_week_date": {"format": None, "icon": "mdi:star-david"},
-    "jewish_week_date_full": {"format": None, "icon": "mdi:star-david"},
+    "wtime_date": {"format": "%B %d, %Y", "icon": "mdi:calendar"},
+    "wtime_date_numbers": {"format": "%x", "icon": "mdi:numeric"},
+    "wtime_time": {"format": "%-I:%M %p", "icon": "mdi:clock"},
+    "wtime_date_time": {"format": "%B %d, %Y - %-I:%M %p", "icon": "mdi:calendar-clock"},
+    "wtime_week_day_long": {"format": "%A", "icon": "mdi:calendar-today"},
+    "wtime_week_day_short": {"format": "%a", "icon": "mdi:calendar-today"},
+    "wtime_current_month": {"format": "%B", "icon": "mdi:calendar-month"},
+    "wtime_current_season": {"format": None, "icon": "mdi:weather-partly-cloudy"},
+    "wtime_jewish_week_date": {"format": None, "icon": "mdi:star-david"},
+    "wtime_jewish_week_date_full": {"format": None, "icon": "mdi:star-david"},
 }
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
@@ -74,17 +74,17 @@ class WtimeSensor(SensorEntity):
         else:
             season = "Fall"
 
-        if self._attr_name == "Jewish Week Date":
+        if self._attr_name == "Wtime Jewish Week Date":
             return jewish_weekdays[weekday]
-        elif self._attr_name == "Jewish Week Date Full":
+        elif self._attr_name == "Wtime Jewish Week Date Full":
             return jewish_weekdays_full[weekday]
-        elif self._attr_name == "Week Day Long":
+        elif self._attr_name == "Wtime Week Day Long":
             return weekdays_long[weekday]
-        elif self._attr_name == "Week Day Short":
+        elif self._attr_name == "Wtime Week Day Short":
             return weekdays_short[weekday]
-        elif self._attr_name == "Current Month":
+        elif self._attr_name == "Wtime Current Month":
             return months[month - 1]
-        elif self._attr_name == "Current Season":
+        elif self._attr_name == "Wtime Current Season":
             return season
         else:
             return now.strftime(self._format)
@@ -112,17 +112,17 @@ class WtimeSensor(SensorEntity):
             "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
         ]
 
-        if self._attr_name == "Jewish Week Date":
+        if self._attr_name == "Wtime Jewish Week Date":
             return {"options": jewish_weekdays}
-        elif self._attr_name == "Jewish Week Date Full":
+        elif self._attr_name == "Wtime Jewish Week Date Full":
             return {"options": jewish_weekdays_full}
-        elif self._attr_name == "Week Day Long":
+        elif self._attr_name == "Wtime Week Day Long":
             return {"options": weekdays_long}
-        elif self._attr_name == "Week Day Short":
+        elif self._attr_name == "Wtime Week Day Short":
             return {"options": weekdays_short}
-        elif self._attr_name == "Current Month":
+        elif self._attr_name == "Wtime Current Month":
             return {"options": months}
-        elif self._attr_name == "Current Season":
+        elif self._attr_name == "Wtime Current Season":
             return {"options": seasons}
         return None
 
@@ -135,7 +135,7 @@ class DstStatusSensor(BinarySensorEntity):
     """Representation of a DST status sensor."""
 
     def __init__(self, entry_id):
-        self._attr_name = "DST Status"
+        self._attr_name = "Wtime DST Status"
         self._attr_unique_id = f"{entry_id}_dst_status"
         self._attr_icon = "mdi:clock-alert"
         self._state = None
