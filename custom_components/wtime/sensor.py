@@ -17,7 +17,7 @@ SENSORS = {
     "jewish_week_date": {"format": None, "icon": "mdi:star-david"},
     "jewish_week_date_full": {"format": None, "icon": "mdi:star-david"},
     "current_month": {"format": "%B", "icon": "mdi:calendar-month"},
-    "current_season": {"format": None, "icon": "mdi:weather-partly-cloudy"},  # New season sensor
+    "current_season": {"format": None, "icon": "mdi:weather-partly-cloudy"},
 }
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
@@ -58,7 +58,7 @@ class WtimeSensor(SensorEntity):
             "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December",
         ]
-        seasons = ["Winter", "Spring", "Summer", "Autumn"]
+        seasons = ["Winter", "Spring", "Summer", "Fall"]
         weekdays_short = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         weekdays_long = [
             "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
@@ -66,7 +66,7 @@ class WtimeSensor(SensorEntity):
 
         now = datetime.now()
         month = now.month
-        weekday = now.weekday()
+        weekday = (now.weekday() + 1) % 7  # Adjust for Sunday as the start of the week.
 
         # Determine the current season based on the month
         if month in [12, 1, 2]:
@@ -76,7 +76,7 @@ class WtimeSensor(SensorEntity):
         elif month in [6, 7, 8]:
             season = "Summer"
         else:
-            season = "Autumn"
+            season = "Fall"
 
         if self._attr_name == "Jewish Week Date":
             return jewish_weekdays[weekday]
@@ -110,7 +110,7 @@ class WtimeSensor(SensorEntity):
             "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December",
         ]
-        seasons = ["Winter", "Spring", "Summer", "Autumn"]
+        seasons = ["Winter", "Spring", "Summer", "Fall"]
         weekdays_short = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         weekdays_long = [
             "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
