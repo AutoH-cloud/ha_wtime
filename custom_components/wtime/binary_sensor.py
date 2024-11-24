@@ -1,4 +1,3 @@
-# custom_components/WTime/binary_sensor.py
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -17,7 +16,7 @@ class WTimeDSTBinarySensor(BinarySensorEntity):
     def _check_dst(self) -> bool:
         """Check if Daylight Saving Time is active."""
         now = datetime.now()
-        return now.dst() != timedelta(0)  # If the DST offset is non-zero, DST is active
+        return now.dst() != timedelta(0)  # DST is active if offset is non-zero
 
     @property
     def is_on(self) -> bool:
@@ -27,7 +26,6 @@ class WTimeDSTBinarySensor(BinarySensorEntity):
     async def async_update(self):
         """Update the state of the DST binary sensor."""
         self._attr_is_on = self._check_dst()
-        self.async_schedule_update_ha_state()
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
     """Set up the DST binary sensor for WTime."""
