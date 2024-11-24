@@ -2,7 +2,6 @@ from datetime import datetime
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 DOMAIN = "wtime"
@@ -19,6 +18,7 @@ SENSORS = {
     "jewish_week_date_full": {"format": None, "icon": "mdi:star-david"},
     "dst_status": {"format": None, "icon": "mdi:clock-alert"},  # DST status sensor
 }
+
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
     """Set up Wtime sensors."""
@@ -40,9 +40,7 @@ class WtimeSensor(SensorEntity):
     @property
     def native_value(self):
         """Return the state of the sensor."""
-        jewish_weekdays = [
-            "א'", "ב'", "ג'", "ד'", "ה'", "ו'", "שבת"
-        ]
+        jewish_weekdays = ["א", "ב", "ג", "ד", "ה", "ו", "שבת"]
         jewish_weekdays_full = [
             "זונטאג",
             "מאנטאג",
@@ -52,7 +50,7 @@ class WtimeSensor(SensorEntity):
             "פרייטאג",
             "שבת קודש",
         ]
-        
+
         # Adjusting weekday to account for Jewish calendar starting from Sunday (0)
         weekday = (datetime.now().weekday() + 1) % 7
 
@@ -62,12 +60,21 @@ class WtimeSensor(SensorEntity):
             return jewish_weekdays_full[weekday]
         elif self._attr_name == "Dst Status":
             # Check if it's after DST or before DST
-            if datetime.now().timetuple().tm_isdst == 1:
-                return "After DST"
-            else:
-                return "Before DST"
+            return "After DST" if datetime.now().timetuple().tm_isdst == 1 else "Before DST"
         else:
             return datetime.now().strftime(self._format)
+
+    @property
+    def entity_category(self):
+        """Optional: categorize sensors for automations."""
+        if self._attr_name in ["Jewish Week Date", "Jewish Week Date Full", "Dst Status"]:
+            return None  # These are general-purpose sensors
+        return None
+
+    @property
+    def available(self):
+        """Ensure the entity is available."""
+        return True
 
     async def async_update(self):
         """Update the sensor state."""
