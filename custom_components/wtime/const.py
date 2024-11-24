@@ -1,10 +1,10 @@
 # const.py
 
 # Domain for the integration
-DOMAIN = "wtime"
+DOMAIN = "WTime"
 
 # Default settings for the integration (if any)
-DEFAULT_NAME = "Wtime"
+DEFAULT_NAME = "WTime"
 
 # Example of default sensor configurations
 DEFAULT_SENSORS = ["date", "time", "dst", "jewish_weekday"]
