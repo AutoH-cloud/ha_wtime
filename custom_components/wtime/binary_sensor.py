@@ -4,10 +4,10 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
 
-DOMAIN = "wtime"
+DOMAIN = "WTime"
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
-    """Set up Wtime binary sensors."""
+    """Set up WTime binary sensors."""
     async_add_entities([WTimeDSTBinarySensor(entry.entry_id)])
 
 class WTimeDSTBinarySensor(BinarySensorEntity):
@@ -28,5 +28,4 @@ class WTimeDSTBinarySensor(BinarySensorEntity):
 
     async def async_update(self):
         """Update the binary sensor state."""
-        # You can leave this empty since `is_on` already updates the state
         pass
