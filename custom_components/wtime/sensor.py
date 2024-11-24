@@ -32,22 +32,22 @@ class WtimeSensor(SensorEntity):
         self._format = data["format"]
         self._attr_icon = data["icon"]
         self._state = None
+        self._options = self._get_options()
 
     @property
     def native_value(self):
         """Return the state of the sensor."""
-        options = self._get_options()
         now = datetime.now()
 
         if self._attr_name in ["Jewish Week Date", "Jewish Week Date Full"]:
             weekday = (now.weekday() + 1) % 7  # Shift to align with Jewish weekdays
-            return options[weekday]
+            return self._options[weekday]
         elif self._attr_name == "Week Day Long":
-            return options[now.weekday()]
+            return self._options[now.weekday()]
         elif self._attr_name == "Week Day Short":
-            return options[now.weekday()]
+            return self._options[now.weekday()]
         elif self._attr_name == "Current Month":
-            return options[now.month - 1]
+            return self._options[now.month - 1]
         elif self._attr_name == "Current Season":
             month = now.month
             if month in [12, 1, 2]:
@@ -62,12 +62,9 @@ class WtimeSensor(SensorEntity):
             return now.strftime(self._format)
 
     @property
-    def extra_state_attributes(self):
-        """Return additional attributes for dropdown support."""
-        options = self._get_options()
-        if options:
-            return {"options": options}
-        return None
+    def options(self):
+        """Return predefined options for dropdown menus."""
+        return self._options
 
     def _get_options(self):
         """Return predefined options for dropdown menus."""
@@ -95,7 +92,7 @@ class WtimeSensor(SensorEntity):
             return months
         elif self._attr_name == "Current Season":
             return seasons
-        return None
+        return []
 
     async def async_update(self):
         """Update the sensor state."""
