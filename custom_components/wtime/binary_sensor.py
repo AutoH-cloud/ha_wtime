@@ -14,7 +14,7 @@ class WTimeDSTBinarySensor(BinarySensorEntity):
 
     def __init__(self, entry_id: str, timezone: str):
         """Initialize the DST sensor."""
-        self._attr_name = "DST Status"
+        self._attr_name = "WTime DST Status"
         self._attr_unique_id = f"{entry_id}_dst_active"
         self._timezone = pytz.timezone(timezone)  # Use Home Assistant's timezone
         self._attr_is_on = self._check_dst()
