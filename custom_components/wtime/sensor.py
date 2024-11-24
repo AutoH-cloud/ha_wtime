@@ -16,6 +16,7 @@ SENSORS = {
     "wtime_current_season": {"format": None, "icon": "mdi:weather-partly-cloudy"},
     "wtime_jewish_week_date": {"format": None, "icon": "mdi:star-david"},
     "wtime_jewish_week_date_full": {"format": None, "icon": "mdi:star-david"},
+    "wtime_timer": {"format": None, "icon": "mdi:timer-sand"}  # Added the timer sensor
 }
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
@@ -84,46 +85,11 @@ class WTimeSensor(SensorEntity):
             return months[month - 1]
         elif self._attr_name == "Wtime Current Season":
             return season
-        else:
-            return now.strftime(self._format)
-
-    @property
-    def extra_state_attributes(self):
-        """Return additional attributes for dropdown support."""
-        jewish_weekdays = ["א", "ב", "ג", "ד", "ה", "ו", "שבת"]
-        jewish_weekdays_full = [
-            "זונטאג",
-            "מאנטאג",
-            "דינסטאג",
-            "מיטוואך",
-            "דאנערשטיג",
-            "פרייטאג",
-            "שבת קודש",
-        ]
-        months = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December",
-        ]
-        seasons = ["Winter", "Spring", "Summer", "Fall"]
-        weekdays_short = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-        weekdays_long = [
-            "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
-        ]
-
-        if self._attr_name == "Wtime Jewish Week Date":
-            return {"options": jewish_weekdays}
-        elif self._attr_name == "Wtime Jewish Week Date Full":
-            return {"options": jewish_weekdays_full}
-        elif self._attr_name == "Wtime Week Day Long":
-            return {"options": weekdays_long}
-        elif self._attr_name == "Wtime Week Day Short":
-            return {"options": weekdays_short}
-        elif self._attr_name == "Wtime Current Month":
-            return {"options": months}
-        elif self._attr_name == "Wtime Current Season":
-            return {"options": seasons}
-        return None
+        elif self._attr_name == "Wtime Timer":
+            return self._state  # Return the timer value as needed
+        return now.strftime(self._format)
 
     async def async_update(self):
         """Update the sensor state."""
-        self._state = self.native_value
+        if self._attr_name == "Wtime Timer":
+            self._state = datetime.now().strftime("%H:%M:%S")  # Example of updating time for the timer sensor
