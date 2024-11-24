@@ -1,7 +1,10 @@
+import logging
 from datetime import datetime
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+
+_LOGGER = logging.getLogger(__name__)
 
 DOMAIN = "wtime"
 
@@ -20,6 +23,7 @@ SENSORS = {
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
     """Set up Wtime sensors."""
+    _LOGGER.debug("Setting up Wtime sensors")
     async_add_entities(
         WTimeSensor(name, data, entry.entry_id) for name, data in SENSORS.items()
     )
@@ -70,6 +74,8 @@ class WTimeSensor(SensorEntity):
             season = "Summer"
         else:
             season = "Fall"
+
+        _LOGGER.debug(f"Returning state for {self._attr_name}")
 
         if self._attr_name == "Wtime Jewish Week Date":
             return jewish_weekdays[weekday]
