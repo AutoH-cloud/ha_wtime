@@ -2,7 +2,6 @@ from datetime import datetime
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from convertdate import hebrew
 
 DOMAIN = "wtime"
 
@@ -37,33 +36,24 @@ class WtimeSensor(SensorEntity):
     @property
     def native_value(self):
         """Return the state of the sensor."""
-        jewish_weekdays = ["א", "ב", "ג", "ד", "ה", "ו", "שבת"]
-        jewish_weekdays_full = [
-            "זונטאג",
-            "מאנטאג",
-            "דינסטאג",
-            "מיטוואך",
-            "דאנערשטיג",
-            "פרייטאג",
-            "שבת קודש",
-        ]
+        jewish_weekdays = ["זונטאג", "מאנטאג", "דינסטאג", "מיטוואך", "דאנערשטיג", "פרייטאג", "שבת"]
+        jewish_weekdays_short = ["א", "ב", "ג", "ד", "ה", "ו", "שבת"]
         months = [
             "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December",
         ]
         seasons = ["Winter", "Spring", "Summer", "Fall"]
-        weekdays_short = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        weekdays_short = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
         weekdays_long = [
-            "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
+            "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
         ]
 
         now = datetime.now()
         month = now.month
         weekday = now.weekday()
 
-        # Determine the current Hebrew weekday using convertdate.hebrew
-        today_hebrew = hebrew.from_gregorian(now.year, now.month, now.day)
-        hebrew_weekday = (today_hebrew[3] - 1) % 7  # Hebrew days are 1-based, adjust to 0-based indexing
+        # Adjust weekday mapping (0=Sunday, 6=Saturday) for Jewish weekdays
+        jewish_weekday = (weekday + 1) % 7  # Shift Python's weekday (0=Monday) to start from Sunday
 
         # Determine the current season based on the month
         if month in [12, 1, 2]:
@@ -76,9 +66,9 @@ class WtimeSensor(SensorEntity):
             season = "Fall"
 
         if self._attr_name == "Jewish Week Date":
-            return jewish_weekdays[hebrew_weekday]
+            return jewish_weekdays_short[jewish_weekday]
         elif self._attr_name == "Jewish Week Date Full":
-            return jewish_weekdays_full[hebrew_weekday]
+            return jewish_weekdays[jewish_weekday]
         elif self._attr_name == "Week Day Long":
             return weekdays_long[weekday]
         elif self._attr_name == "Week Day Short":
@@ -93,30 +83,22 @@ class WtimeSensor(SensorEntity):
     @property
     def extra_state_attributes(self):
         """Return additional attributes for dropdown support."""
-        jewish_weekdays = ["א", "ב", "ג", "ד", "ה", "ו", "שבת"]
-        jewish_weekdays_full = [
-            "זונטאג",
-            "מאנטאג",
-            "דינסטאג",
-            "מיטוואך",
-            "דאנערשטיג",
-            "פרייטאג",
-            "שבת קודש",
-        ]
+        jewish_weekdays = ["זונטאג", "מאנטאג", "דינסטאג", "מיטוואך", "דאנערשטיג", "פרייטאג", "שבת"]
+        jewish_weekdays_short = ["א", "ב", "ג", "ד", "ה", "ו", "שבת"]
         months = [
             "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December",
         ]
         seasons = ["Winter", "Spring", "Summer", "Fall"]
-        weekdays_short = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        weekdays_short = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
         weekdays_long = [
-            "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
+            "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
         ]
 
         if self._attr_name == "Jewish Week Date":
-            return {"options": jewish_weekdays}
+            return {"options": jewish_weekdays_short}
         elif self._attr_name == "Jewish Week Date Full":
-            return {"options": jewish_weekdays_full}
+            return {"options": jewish_weekdays}
         elif self._attr_name == "Week Day Long":
             return {"options": weekdays_long}
         elif self._attr_name == "Week Day Short":
