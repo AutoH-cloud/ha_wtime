@@ -1,3 +1,4 @@
+# custom_components/WTime/config_flow.py
 from homeassistant import config_entries
 from .const import DOMAIN
 
