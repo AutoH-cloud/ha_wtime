@@ -1,9 +1,7 @@
-# custom_components/WTime/timer.py
 from datetime import timedelta
 from homeassistant.components.timer import TimerEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers.entity import Entity
+from homeassistant.core import HomeAssistant
 
 class WTimeTimer(TimerEntity):
     """Representation of a WTime timer."""
