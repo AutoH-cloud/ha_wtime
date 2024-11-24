@@ -41,7 +41,7 @@ class WtimeSensor(SensorEntity):
     def native_value(self):
         """Return the state of the sensor."""
         jewish_weekdays = [
-            "א", "'ב", "'ג", "'ד", "'ה", "'ו", "שבת'"
+            "א'", "ב'", "ג'", "ד'", "ה'", "ו'", "שבת"
         ]
         jewish_weekdays_full = [
             "זונטאג",
