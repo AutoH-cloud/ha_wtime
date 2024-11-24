@@ -1,6 +1,5 @@
 from datetime import datetime
 from homeassistant.components.sensor import SensorEntity
-from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
@@ -52,7 +51,7 @@ class WtimeSensor(SensorEntity):
             "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December",
         ]
-        seasons = ["Winter", "Spring", "Summer", "Autumn"]
+        seasons = ["Winter", "Spring", "Summer", "Fall"]  # Updated season list
         weekdays_short = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         weekdays_long = [
             "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
@@ -70,7 +69,7 @@ class WtimeSensor(SensorEntity):
         elif month in [6, 7, 8]:
             season = "Summer"
         else:
-            season = "Autumn"
+            season = "Fall"  # Changed "Autumn" to "Fall"
 
         if self._attr_name == "Jewish Week Date":
             return jewish_weekdays[weekday]
@@ -104,7 +103,7 @@ class WtimeSensor(SensorEntity):
             "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December",
         ]
-        seasons = ["Winter", "Spring", "Summer", "Autumn"]
+        seasons = ["Winter", "Spring", "Summer", "Fall"]  # Updated season list
         weekdays_short = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         weekdays_long = [
             "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
