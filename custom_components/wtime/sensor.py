@@ -6,7 +6,7 @@ from homeassistant.core import HomeAssistant
 
 _LOGGER = logging.getLogger(__name__)
 
-DOMAIN = "wtime"
+DOMAIN = "WTime"
 
 SENSORS = {
     "wtime_date": {"format": "%B %d, %Y", "icon": "mdi:calendar"},
@@ -21,14 +21,14 @@ SENSORS = {
 }
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
-    """Set up Wtime sensors."""
-    _LOGGER.debug("Setting up Wtime sensors")
+    """Set up WTime sensors."""
+    _LOGGER.debug("Setting up WTime sensors")
     async_add_entities(
         WTimeSensor(name, data, entry.entry_id) for name, data in SENSORS.items()
     )
 
 class WTimeSensor(SensorEntity):
-    """Representation of a Wtime sensor."""
+    """Representation of a WTime sensor."""
 
     def __init__(self, name, data, entry_id):
         self._attr_name = name.replace("_", " ").title()  # Set name with spaces
@@ -114,7 +114,3 @@ class WTimeSensor(SensorEntity):
         elif self._attr_name == "WTime Current Season":
             return {"options": seasons}
         return {}
-
-    async def async_update(self):
-        """Update the sensor state."""
-        self._state = self.native_value
