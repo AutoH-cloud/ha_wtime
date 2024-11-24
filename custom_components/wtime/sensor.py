@@ -11,7 +11,6 @@ DOMAIN = "wtime"
 SENSORS = {
     "wtime_date": {"format": "%B %d, %Y", "icon": "mdi:calendar"},
     "wtime_date_numbers": {"format": "%x", "icon": "mdi:numeric"},
-    "wtime_time": {"format": "%-I:%M %p", "icon": "mdi:clock"},
     "wtime_week_day_long": {"format": "%A", "icon": "mdi:calendar-today"},
     "wtime_week_day_short": {"format": "%a", "icon": "mdi:calendar-today"},
     "wtime_current_month": {"format": "%B", "icon": "mdi:calendar-month"},
