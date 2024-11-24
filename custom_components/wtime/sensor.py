@@ -16,6 +16,8 @@ SENSORS = {
     "week_and_date": {"format": "%a, %B %d, %Y", "icon": "mdi:calendar-range"},
     "jewish_week_date": {"format": None, "icon": "mdi:star-david"},
     "jewish_week_date_full": {"format": None, "icon": "mdi:star-david"},
+    "current_month": {"format": "%B", "icon": "mdi:calendar-month"},
+    "current_season": {"format": None, "icon": "mdi:weather-partly-cloudy"},  # New season sensor
 }
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
@@ -52,33 +54,80 @@ class WtimeSensor(SensorEntity):
             "פרייטאג",
             "שבת קודש",
         ]
+        months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December",
+        ]
+        seasons = ["Winter", "Spring", "Summer", "Autumn"]
+        weekdays_short = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        weekdays_long = [
+            "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
+        ]
 
-        weekday = (datetime.now().weekday() + 1) % 7
+        now = datetime.now()
+        month = now.month
+        weekday = now.weekday()
+
+        # Determine the current season based on the month
+        if month in [12, 1, 2]:
+            season = "Winter"
+        elif month in [3, 4, 5]:
+            season = "Spring"
+        elif month in [6, 7, 8]:
+            season = "Summer"
+        else:
+            season = "Autumn"
 
         if self._attr_name == "Jewish Week Date":
             return jewish_weekdays[weekday]
         elif self._attr_name == "Jewish Week Date Full":
             return jewish_weekdays_full[weekday]
+        elif self._attr_name == "Week Day Long":
+            return weekdays_long[weekday]
+        elif self._attr_name == "Week Day Short":
+            return weekdays_short[weekday]
+        elif self._attr_name == "Current Month":
+            return months[month - 1]
+        elif self._attr_name == "Current Season":
+            return season
         else:
-            return datetime.now().strftime(self._format)
+            return now.strftime(self._format)
 
     @property
     def extra_state_attributes(self):
         """Return additional attributes for dropdown support."""
+        jewish_weekdays = ["א", "ב", "ג", "ד", "ה", "ו", "שבת"]
+        jewish_weekdays_full = [
+            "זונטאג",
+            "מאנטאג",
+            "דינסטאג",
+            "מיטוואך",
+            "דאנערשטיג",
+            "פרייטאג",
+            "שבת קודש",
+        ]
+        months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December",
+        ]
+        seasons = ["Winter", "Spring", "Summer", "Autumn"]
+        weekdays_short = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        weekdays_long = [
+            "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
+        ]
+
         if self._attr_name == "Jewish Week Date":
-            return {"options": ["א", "ב", "ג", "ד", "ה", "ו", "שבת"]}
+            return {"options": jewish_weekdays}
         elif self._attr_name == "Jewish Week Date Full":
-            return {
-                "options": [
-                    "זונטאג",
-                    "מאנטאג",
-                    "דינסטאג",
-                    "מיטוואך",
-                    "דאנערשטיג",
-                    "פרייטאג",
-                    "שבת קודש",
-                ]
-            }
+            return {"options": jewish_weekdays_full}
+        elif self._attr_name == "Week Day Long":
+            return {"options": weekdays_long}
+        elif self._attr_name == "Week Day Short":
+            return {"options": weekdays_short}
+        elif self._attr_name == "Current Month":
+            return {"options": months}
+        elif self._attr_name == "Current Season":
+            return {"options": seasons}
         return None
 
     async def async_update(self):
