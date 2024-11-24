@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -23,6 +23,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         WtimeSensor(name, data, entry.entry_id) for name, data in SENSORS.items()
     )
 
+def get_jewish_weekday():
+    """Calculate the correct Jewish weekday considering sunset time."""
+    now = datetime.now()
+    if now.hour >= 18:  # Assuming 6 PM as an approximate sunset time
+        now += timedelta(days=1)  # Advance to the next day for Jewish calendar
+    return now.weekday()
 
 class WtimeSensor(SensorEntity):
     """Representation of a Wtime sensor."""
@@ -61,6 +67,9 @@ class WtimeSensor(SensorEntity):
         month = now.month
         weekday = now.weekday()
 
+        # Get the correct Jewish weekday
+        jewish_weekday = get_jewish_weekday()
+
         # Determine the current season based on the month
         if month in [12, 1, 2]:
             season = "Winter"
@@ -69,12 +78,12 @@ class WtimeSensor(SensorEntity):
         elif month in [6, 7, 8]:
             season = "Summer"
         else:
-            season = "Fall"  # Changed "Autumn" to "Fall"
+            season = "Fall"
 
         if self._attr_name == "Jewish Week Date":
-            return jewish_weekdays[weekday]
+            return jewish_weekdays[jewish_weekday]
         elif self._attr_name == "Jewish Week Date Full":
-            return jewish_weekdays_full[weekday]
+            return jewish_weekdays_full[jewish_weekday]
         elif self._attr_name == "Week Day Long":
             return weekdays_long[weekday]
         elif self._attr_name == "Week Day Short":
