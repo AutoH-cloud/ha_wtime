@@ -1,5 +1,4 @@
 from datetime import datetime
-from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -24,7 +23,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     async_add_entities(
         WtimeSensor(name, data, entry.entry_id) for name, data in SENSORS.items()
     )
-    async_add_entities([DstStatusSensor(entry.entry_id)])
 
 
 class WtimeSensor(SensorEntity):
@@ -129,27 +127,3 @@ class WtimeSensor(SensorEntity):
     async def async_update(self):
         """Update the sensor state."""
         self._state = self.native_value
-
-
-class DstStatusSensor(BinarySensorEntity):
-    """Representation of a DST status sensor."""
-
-    def __init__(self, entry_id):
-        self._attr_name = "Wtime DST Status"
-        self._attr_unique_id = f"{entry_id}_dst_status"
-        self._attr_icon = "mdi:clock-alert"
-        self._state = None
-
-    @property
-    def is_on(self):
-        """Return True if DST is active."""
-        return datetime.now().timetuple().tm_isdst == 1
-
-    @property
-    def extra_state_attributes(self):
-        """Provide dropdown options for DST status."""
-        return {"options": ["After DST", "Before DST"]}
-
-    async def async_update(self):
-        """Update the sensor state."""
-        self._state = self.is_on
