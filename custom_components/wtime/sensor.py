@@ -7,7 +7,7 @@ DOMAIN = "wtime"
 
 SENSORS = {
     "wtime_date": {"format": "%B %d, %Y", "icon": "mdi:calendar"},
-    "wtimw_date_numbers": {"format": "%x", "icon": "mdi:numeric"},
+    "wtime_date_numbers": {"format": "%x", "icon": "mdi:numeric"},
     "wtime_time": {"format": "%-I:%M %p", "icon": "mdi:clock"},
     "wtime_week_day": {"format": "%A", "icon": "mdi:calendar-today"},
     "wtime_week_day_short": {"format": "%a", "icon": "mdi:calendar-today"},
@@ -39,16 +39,16 @@ class WtimeSensor(SensorEntity):
         """Return the state of the sensor."""
         now = datetime.now()
 
-        if self._attr_name in ["WTime Jewish Week Date Short", "WTime Jewish Week Date"]:
-            weekday = (now.weekday() + 1) % 7  # Shift to align with Jewish weekdays
+        if self._attr_name in ["Wtime Jewish Week Date Short", "Wtime Jewish Week Date"]:
+            weekday = (now.weekday() + 1) % 7  # Adjust for Jewish weekday format
             return self._options[weekday]
-        elif self._attr_name == "WTime Week Day":
+        elif self._attr_name == "Wtime Week Day":
             return self._options[now.weekday()]
-        elif self._attr_name == "WTime Week Day Short":
+        elif self._attr_name == "Wtime Week Day Short":
             return self._options[now.weekday()]
-        elif self._attr_name == "WTime Current Month":
+        elif self._attr_name == "Wtime Current Month":
             return self._options[now.month - 1]
-        elif self._attr_name == "WTime Current Season":
+        elif self._attr_name == "Wtime Current Season":
             month = now.month
             if month in [12, 1, 2]:
                 return "Winter"
@@ -80,18 +80,18 @@ class WtimeSensor(SensorEntity):
             "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
         ]
 
-        if self._attr_name == "WTime Jewish Week Date":
+        if self._attr_name == "Wtime Jewish Week Date Short":
             return wtime_jewish_weekdays_short
-        elif self._attr_name == "WTime Jewish Week Date":
+        elif self._attr_name == "Wtime Jewish Week Date":
             return wtime_jewish_weekdays
-        elif self._attr_name == "WTimeWeek Day":
+        elif self._attr_name == "Wtime Week Day":
             return wtime_weekdays
-        elif self._attr_name == "WTime Week Day Short":
+        elif self._attr_name == "Wtime Week Day Short":
             return wtime_weekdays_short
         elif self._attr_name == "Wtime Current Month":
             return wtime_months
-        elif self._attr_name == "WTime Current Season":
-            return seasons
+        elif self._attr_name == "Wtime Current Season":
+            return wtime_seasons
         return []
 
     async def async_update(self):
