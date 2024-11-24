@@ -1,4 +1,5 @@
 from datetime import datetime
+from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -16,7 +17,6 @@ SENSORS = {
     "current_season": {"format": None, "icon": "mdi:weather-partly-cloudy"},
     "jewish_week_date": {"format": None, "icon": "mdi:star-david"},
     "jewish_week_date_full": {"format": None, "icon": "mdi:star-david"},
-    "dst_status": {"format": None, "icon": "mdi:clock-alert"},  # Dropdown for DST status
 }
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
@@ -24,6 +24,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     async_add_entities(
         WtimeSensor(name, data, entry.entry_id) for name, data in SENSORS.items()
     )
+    async_add_entities([DstStatusSensor(entry.entry_id)])
 
 
 class WtimeSensor(SensorEntity):
@@ -54,7 +55,6 @@ class WtimeSensor(SensorEntity):
             "July", "August", "September", "October", "November", "December",
         ]
         seasons = ["Winter", "Spring", "Summer", "Fall"]
-        dst_status = ["After DST", "Before DST"]
         weekdays_short = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         weekdays_long = [
             "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
@@ -86,9 +86,6 @@ class WtimeSensor(SensorEntity):
             return months[month - 1]
         elif self._attr_name == "Current Season":
             return season
-        elif self._attr_name == "Dst Status":
-            # Check if it's after DST or before DST
-            return "After DST" if now.timetuple().tm_isdst == 1 else "Before DST"
         else:
             return now.strftime(self._format)
 
@@ -110,7 +107,6 @@ class WtimeSensor(SensorEntity):
             "July", "August", "September", "October", "November", "December",
         ]
         seasons = ["Winter", "Spring", "Summer", "Fall"]
-        dst_status = ["After DST", "Before DST"]
         weekdays_short = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         weekdays_long = [
             "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
@@ -128,10 +124,32 @@ class WtimeSensor(SensorEntity):
             return {"options": months}
         elif self._attr_name == "Current Season":
             return {"options": seasons}
-        elif self._attr_name == "Dst Status":
-            return {"options": dst_status}
         return None
 
     async def async_update(self):
         """Update the sensor state."""
         self._state = self.native_value
+
+
+class DstStatusSensor(BinarySensorEntity):
+    """Representation of a DST status sensor."""
+
+    def __init__(self, entry_id):
+        self._attr_name = "DST Status"
+        self._attr_unique_id = f"{entry_id}_dst_status"
+        self._attr_icon = "mdi:clock-alert"
+        self._state = None
+
+    @property
+    def is_on(self):
+        """Return True if DST is active."""
+        return datetime.now().timetuple().tm_isdst == 1
+
+    @property
+    def extra_state_attributes(self):
+        """Provide dropdown options for DST status."""
+        return {"options": ["After DST", "Before DST"]}
+
+    async def async_update(self):
+        """Update the sensor state."""
+        self._state = self.is_on
