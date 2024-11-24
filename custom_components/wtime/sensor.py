@@ -25,7 +25,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     )
 
 
-class WtimeSensor(SensorEntity):
+class WTimeSensor(SensorEntity):
     """Representation of a Wtime sensor."""
 
     def __init__(self, name, data, entry_id):
