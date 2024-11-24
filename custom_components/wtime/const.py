@@ -1,16 +1,16 @@
-# custom_components/WTime/const.py
+"""Constants for WTime integration."""
 
-DOMAIN = "WTime"
-
+DOMAIN = "wtime"
 DEFAULT_NAME = "WTime"
 
-# Define available sensor types
+# Sensor types
 SENSOR_TYPES = {
     "wtime_date": "Date",
     "wtime_time": "Time",
-    "wtime_dst": "DST Status",  # Added DST status
+    "wtime_dst": "DST Status",
 }
 
+# Configuration keys
 CONF_SENSORS = "sensors"
 CONF_UPDATE_INTERVAL = "update_interval"
-DEFAULT_UPDATE_INTERVAL = 60  # in seconds
+DEFAULT_UPDATE_INTERVAL = 60  # Default update interval in seconds
