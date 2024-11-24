@@ -22,9 +22,11 @@ class WTimeDSTBinarySensor(BinarySensorEntity):
     @property
     def is_on(self):
         """Return true if the DST status is on."""
+        now = datetime.now()
+        self._state = now.dst() is not None
         return self._state
 
     async def async_update(self):
         """Update the binary sensor state."""
-        now = datetime.now()
-        self._state = now.dst() is not None
+        # You can leave this empty since `is_on` already updates the state
+        pass
