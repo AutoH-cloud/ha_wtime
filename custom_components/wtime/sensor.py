@@ -1,7 +1,8 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from convertdate import hebrew
 
 DOMAIN = "wtime"
 
@@ -22,13 +23,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     async_add_entities(
         WtimeSensor(name, data, entry.entry_id) for name, data in SENSORS.items()
     )
-
-def get_jewish_weekday():
-    """Calculate the correct Jewish weekday considering sunset time."""
-    now = datetime.now()
-    if now.hour >= 18:  # Assuming 6 PM as an approximate sunset time
-        now += timedelta(days=1)  # Advance to the next day for Jewish calendar
-    return now.weekday()
 
 class WtimeSensor(SensorEntity):
     """Representation of a Wtime sensor."""
@@ -57,7 +51,7 @@ class WtimeSensor(SensorEntity):
             "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December",
         ]
-        seasons = ["Winter", "Spring", "Summer", "Fall"]  # Updated season list
+        seasons = ["Winter", "Spring", "Summer", "Fall"]
         weekdays_short = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         weekdays_long = [
             "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
@@ -67,8 +61,9 @@ class WtimeSensor(SensorEntity):
         month = now.month
         weekday = now.weekday()
 
-        # Get the correct Jewish weekday
-        jewish_weekday = get_jewish_weekday()
+        # Determine the current Hebrew weekday using convertdate.hebrew
+        today_hebrew = hebrew.from_gregorian(now.year, now.month, now.day)
+        hebrew_weekday = (today_hebrew[3] - 1) % 7  # Hebrew days are 1-based, adjust to 0-based indexing
 
         # Determine the current season based on the month
         if month in [12, 1, 2]:
@@ -81,9 +76,9 @@ class WtimeSensor(SensorEntity):
             season = "Fall"
 
         if self._attr_name == "Jewish Week Date":
-            return jewish_weekdays[jewish_weekday]
+            return jewish_weekdays[hebrew_weekday]
         elif self._attr_name == "Jewish Week Date Full":
-            return jewish_weekdays_full[jewish_weekday]
+            return jewish_weekdays_full[hebrew_weekday]
         elif self._attr_name == "Week Day Long":
             return weekdays_long[weekday]
         elif self._attr_name == "Week Day Short":
@@ -112,7 +107,7 @@ class WtimeSensor(SensorEntity):
             "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December",
         ]
-        seasons = ["Winter", "Spring", "Summer", "Fall"]  # Updated season list
+        seasons = ["Winter", "Spring", "Summer", "Fall"]
         weekdays_short = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         weekdays_long = [
             "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
