@@ -12,7 +12,6 @@ SENSORS = {
     "wtime_date": {"format": "%B %d, %Y", "icon": "mdi:calendar"},
     "wtime_date_numbers": {"format": "%x", "icon": "mdi:numeric"},
     "wtime_time": {"format": "%-I:%M %p", "icon": "mdi:clock"},
-    "wtime_date_time": {"format": "%B %d, %Y - %-I:%M %p", "icon": "mdi:calendar-clock"},
     "wtime_week_day_long": {"format": "%A", "icon": "mdi:calendar-today"},
     "wtime_week_day_short": {"format": "%a", "icon": "mdi:calendar-today"},
     "wtime_current_month": {"format": "%B", "icon": "mdi:calendar-month"},
@@ -41,7 +40,7 @@ class WTimeSensor(SensorEntity):
     @property
     def native_value(self):
         """Return the state of the sensor."""
-        jewish_weekdays = ["א", "ב", "ג", "ד", "ה", "ו", "שבת"]
+        jewish_weekdays = ["א'", "ב'", "ג'", "ד'", "ה'", "ו'", "שבת"]
         jewish_weekdays_full = [
             "זונטאג",
             "מאנטאג",
@@ -115,17 +114,17 @@ class WTimeSensor(SensorEntity):
             "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
         ]
 
-        if self._attr_name == "Wtime Jewish Week Date":
+        if self._attr_name == "WTime Jewish Week Date":
             return {"options": jewish_weekdays}
-        elif self._attr_name == "Wtime Jewish Week Date Full":
+        elif self._attr_name == "WTime Jewish Week Date Full":
             return {"options": jewish_weekdays_full}
-        elif self._attr_name == "Wtime Week Day Long":
+        elif self._attr_name == "WTime Week Day Long":
             return {"options": weekdays_long}
-        elif self._attr_name == "Wtime Week Day Short":
+        elif self._attr_name == "WTime Week Day Short":
             return {"options": weekdays_short}
-        elif self._attr_name == "Wtime Current Month":
+        elif self._attr_name == "WTime Current Month":
             return {"options": months}
-        elif self._attr_name == "Wtime Current Season":
+        elif self._attr_name == "WTime Current Season":
             return {"options": seasons}
         return None
 
