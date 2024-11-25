@@ -3,7 +3,7 @@
 ## **Wtime Custom Integration for Home Assistant**
 ### *Still in Beta - Use at your own discretion!*
 
-Welcome to the **Wtime** custom integration for Home Assistant! This integration provides various sensors related to time and dates, including support for daylight savings status, and more. It is perfect for displaying various time-based information on your Home Assistant dashboard.
+Welcome to the **Wtime** custom integration for Home Assistant! This integration provides various sensors related to time and dates, including support for daylight savings status, seasons, and more. It is perfect for displaying various time-based information on your Home Assistant dashboard.
 
 ---
 
@@ -11,7 +11,8 @@ Welcome to the **Wtime** custom integration for Home Assistant! This integration
 - **Current Date**: Displays the current date in a user-friendly format.
 - **Time**: Displays the current time, which updates in real-time.
 - **DST Status (Binary Sensor)**: Indicates whether the current time is during Daylight Saving Time (DST).
-- **Customizable**: Easily adjust the date and time formats to suit your preferences.
+- **Current Season**: Displays the current season (Spring, Summer, Fall, or Winter).
+- **Customizable**: Easily adjust the date, time, and season formats to suit your preferences.
 
 ---
 
@@ -56,6 +57,8 @@ Welcome to the **Wtime** custom integration for Home Assistant! This integration
        name: "Current Date"
      - platform: wtime
        name: "Current Time"
+     - platform: wtime
+       name: "Current Season"
 
    binary_sensor:
      - platform: wtime
