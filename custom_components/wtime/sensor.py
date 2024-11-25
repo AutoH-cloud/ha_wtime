@@ -1,7 +1,7 @@
 from datetime import datetime
 from homeassistant.components.sensor import SensorEntity
-from homeassistant.const import SensorDeviceClass
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import SensorDeviceClass
 from homeassistant.core import HomeAssistant
 
 DOMAIN = "wtime"
@@ -36,15 +36,6 @@ class WtimeSensor(SensorEntity):
         """Return the state of the sensor."""
         now = datetime.now()
         month = now.month
-
-        # Determine the current season
-        season = (
-            "Winter" if month in [12, 1, 2] else
-            "Spring" if month in [3, 4, 5] else
-            "Summer" if month in [6, 7, 8] else
-            "Fall"
-        )
-
         if self._attr_name == "Wtime Week Day":
             return now.strftime("%A")
         elif self._attr_name == "Wtime Week Day Short":
@@ -52,10 +43,17 @@ class WtimeSensor(SensorEntity):
         elif self._attr_name == "Wtime Current Month":
             return now.strftime("%B")
         elif self._attr_name == "Wtime Current Season":
-            return season
+            if month in [12, 1, 2]:
+                return "Winter"
+            elif month in [3, 4, 5]:
+                return "Spring"
+            elif month in [6, 7, 8]:
+                return "Summer"
+            else:
+                return "Fall"
         else:
             return now.strftime(self._format)
 
     async def async_update(self):
         """Update the sensor state."""
-        self._attr_native_value = self.native_value
+        pass
