@@ -1,6 +1,5 @@
 from datetime import datetime
 from homeassistant.helpers.entity import Entity
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 SEASONS = {
     1: "Winter",
@@ -21,9 +20,9 @@ def get_current_season():
     month = datetime.now().month
     return SEASONS[month]
 
+
 class WTimeSensor(Entity):
-    def __init__(self, hass, name, format_str, icon):
-        self.hass = hass
+    def __init__(self, name, format_str, icon):
         self._name = name
         self._format = format_str
         self._icon = icon
@@ -60,13 +59,13 @@ class WTimeSensor(Entity):
             self._state = now.strftime(self._format)
 
 
-def setup_platform(hass, config, add_entities, discovery_info=None):
+async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     sensors = [
-        WTimeSensor(hass, "WTime Date", "%B %d, %Y", "mdi:calendar"),
-        WTimeSensor(hass, "WTime Date Numbers", "%x", "mdi:numeric"),
-        WTimeSensor(hass, "WTime Week Day", "%A", "mdi:calendar-today"),
-        WTimeSensor(hass, "WTime Week Day Short", "%a", "mdi:calendar-today"),
-        WTimeSensor(hass, "WTime Current Month", "%B", "mdi:calendar-month"),
-        WTimeSensor(hass, "WTime Current Season", None, "mdi:weather-partly-cloudy"),
+        WTimeSensor("WTime Date", "%B %d, %Y", "mdi:calendar"),
+        WTimeSensor("WTime Date Numbers", "%x", "mdi:numeric"),
+        WTimeSensor("WTime Week Day", "%A", "mdi:calendar-today"),
+        WTimeSensor("WTime Week Day Short", "%a", "mdi:calendar-today"),
+        WTimeSensor("WTime Current Month", "%B", "mdi:calendar-month"),
+        WTimeSensor("WTime Current Season", None, "mdi:weather-partly-cloudy"),
     ]
-    add_entities(sensors)
+    async_add_entities(sensors, update_before_add=True)
