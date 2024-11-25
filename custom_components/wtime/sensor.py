@@ -1,71 +1,102 @@
 from datetime import datetime
-from homeassistant.helpers.entity import Entity
+from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.select import SelectEntity
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
 
-SEASONS = {
-    1: "Winter",
-    2: "Winter",
-    3: "Spring",
-    4: "Spring",
-    5: "Spring",
-    6: "Summer",
-    7: "Summer",
-    8: "Summer",
-    9: "Fall",
-    10: "Fall",
-    11: "Fall",
-    12: "Winter",
+DOMAIN = "wtime"
+
+SENSORS = {
+    "wtime_date": {"format": "%B %d, %Y", "icon": "mdi:calendar"},
+    "wtime_date_numbers": {"format": "%x", "icon": "mdi:numeric"},
+    "wtime_time": {"format": "%-I:%M %p", "icon": "mdi:clock"},
+    "wtime_week_day": {"format": "%A", "icon": "mdi:calendar-today"},
+    "wtime_week_day_short": {"format": "%a", "icon": "mdi:calendar-today"},
+    "wtime_current_month": {"format": "%B", "icon": "mdi:calendar-month"},
+    "wtime_current_season": {"format": None, "icon": "mdi:weather-partly-cloudy"},
 }
 
-def get_current_season():
-    month = datetime.now().month
-    return SEASONS[month]
+SEASON_OPTIONS = ["Winter", "Spring", "Summer", "Fall"]
+MONTH_OPTIONS = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+]
 
 
-class WTimeSensor(Entity):
-    def __init__(self, name, format_str, icon):
-        self._name = name
-        self._format = format_str
-        self._icon = icon
-        self._state = None
-        self._attributes = {}
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
+    """Set up WTime sensors and selects."""
+    sensors = [
+        WtimeSensor(name, data, entry.entry_id) for name, data in SENSORS.items()
+    ]
+    selects = [
+        WtimeSelect("Wtime Current Month", MONTH_OPTIONS, entry.entry_id),
+        WtimeSelect("Wtime Current Season", SEASON_OPTIONS, entry.entry_id),
+    ]
+    async_add_entities(sensors + selects, update_before_add=True)
+
+
+class WtimeSensor(SensorEntity):
+    """Representation of a WTime sensor."""
+
+    def __init__(self, name, data, entry_id):
+        self._attr_name = name.replace("_", " ").title()
+        self._attr_unique_id = f"{entry_id}_{name}"
+        self._format = data["format"]
+        self._attr_icon = data["icon"]
 
     @property
-    def name(self):
-        return self._name
+    def native_value(self):
+        """Return the state of the sensor."""
+        now = datetime.now()
+        month = now.month
 
-    @property
-    def state(self):
-        return self._state
+        # Determine the current season based on the month
+        if month in [12, 1, 2]:
+            season = "Winter"
+        elif month in [3, 4, 5]:
+            season = "Spring"
+        elif month in [6, 7, 8]:
+            season = "Summer"
+        else:
+            season = "Fall"
 
-    @property
-    def icon(self):
-        return self._icon
+        if self._attr_name == "Wtime Week Day":
+            return now.strftime("%A")
+        elif self._attr_name == "Wtime Week Day Short":
+            return now.strftime("%a")
+        elif self._attr_name == "Wtime Current Month":
+            return now.strftime("%B")
+        elif self._attr_name == "Wtime Current Season":
+            return season
+        else:
+            return now.strftime(self._format)
 
     @property
     def extra_state_attributes(self):
-        return self._attributes
+        """Provide extra attributes."""
+        if self._attr_name == "Wtime Current Month":
+            return {"options": MONTH_OPTIONS}
+        elif self._attr_name == "Wtime Current Season":
+            return {"options": SEASON_OPTIONS}
+        return None
 
-    def update(self):
-        now = datetime.now()
-        if self._name == "WTime Current Season":
-            self._state = get_current_season()
-            self._attributes = {
-                "Winter": "December, January, February",
-                "Spring": "March, April, May",
-                "Summer": "June, July, August",
-                "Fall": "September, October, November",
-            }
-        elif self._format:
-            self._state = now.strftime(self._format)
+    async def async_update(self):
+        """Update the sensor state."""
+        self._attr_native_value = self.native_value
 
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-    sensors = [
-        WTimeSensor("WTime Date", "%B %d, %Y", "mdi:calendar"),
-        WTimeSensor("WTime Date Numbers", "%x", "mdi:numeric"),
-        WTimeSensor("WTime Week Day", "%A", "mdi:calendar-today"),
-        WTimeSensor("WTime Week Day Short", "%a", "mdi:calendar-today"),
-        WTimeSensor("WTime Current Month", "%B", "mdi:calendar-month"),
-        WTimeSensor("WTime Current Season", None, "mdi:weather-partly-cloudy"),
-    ]
-    async_add_entities(sensors, update_before_add=True)
+class WtimeSelect(SelectEntity):
+    """Representation of a WTime select entity."""
+
+    def __init__(self, name, options, entry_id):
+        self._attr_name = name.replace("_", " ").title()
+        self._attr_unique_id = f"{entry_id}_{name}"
+        self._options = options
+        self._attr_options = options
+        self._attr_current_option = options[0]
+
+    async def async_select_option(self, option: str):
+        """Change the selected option."""
+        if option in self._options:
+            self._attr_current_option = option
+            self.async_write_ha_state()
