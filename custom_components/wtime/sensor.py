@@ -11,7 +11,6 @@ SENSORS = {
     "wtime_time": {"format": "%-I:%M %p", "icon": "mdi:clock"},
     "wtime_week_day": {"format": "%A", "icon": "mdi:calendar-today"},
     "wtime_week_day_short": {"format": "%a", "icon": "mdi:calendar-today"},
-    "wtime_jewish_week_date": {"format": None, "icon": "mdi:star-david"},
     "wtime_current_month": {"format": "%B", "icon": "mdi:calendar-month"},
     "wtime_current_season": {"format": None, "icon": "mdi:weather-partly-cloudy"},
 }
@@ -35,8 +34,6 @@ class WtimeSensor(SensorEntity):
     @property
     def native_value(self):
         """Return the state of the sensor."""
-        jewish_weekdays = ["זונטאג", "מאנטאג", "דינסטאג", "מיטוואך", "דאנערשטיג", "פרייטאג", "שבת"]
-        jewish_weekdays_short = ["א", "ב", "ג", "ד", "ה", "ו", "שבת"]
         months = [
             "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December",
@@ -61,9 +58,7 @@ class WtimeSensor(SensorEntity):
         else:
             season = "Fall"
 
-        if self._attr_name == "Wtime Jewish Week Date":
-            return jewish_weekdays_short[weekday]
-        elif self._attr_name == "Wtime Week Day":
+        if self._attr_name == "Wtime Week Day":
             return weekdays_long[weekday]
         elif self._attr_name == "Wtime Week Day Short":
             return weekdays_short[weekday]
@@ -77,8 +72,6 @@ class WtimeSensor(SensorEntity):
     @property
     def extra_state_attributes(self):
         """Return additional attributes for dropdown support."""
-        jewish_weekdays = ["זונטאג", "מאנטאג", "דינסטאג", "מיטוואך", "דאנערשטיג", "פרייטאג", "שבת"]
-        jewish_weekdays_short = ["א", "ב", "ג", "ד", "ה", "ו", "שבת"]
         months = [
             "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December",
@@ -89,9 +82,7 @@ class WtimeSensor(SensorEntity):
             "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
         ]
 
-        if self._attr_name == "Wtime Jewish Week Date":
-            return {"options": jewish_weekdays_short}
-        elif self._attr_name == "Wtime Week Day":
+        if self._attr_name == "Wtime Week Day":
             return {"options": weekdays_long}
         elif self._attr_name == "Wtime Week Day Short":
             return {"options": weekdays_short}
