@@ -8,7 +8,7 @@
   "codeowners": ["@autoh.cloud"],
   "iot_class": "local_polling",
   "config_flow": true,
- "config_entry_type": "single",
+ "config_entry_type": "service",
   "single_config_entry": "true",
   "icon": []
 }
