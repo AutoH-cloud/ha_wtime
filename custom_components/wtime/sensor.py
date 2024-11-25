@@ -59,20 +59,7 @@ class WtimeSensor(SensorEntity):
 
     @property
     def extra_state_attributes(self):
-        """Provide dropdown options for certain sensors."""
-        months = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        ]
-        seasons = ["Winter", "Spring", "Summer", "Fall"]
-        dates = [f"{i}" for i in range(1, 32)]  # 1 to 31
-
-        if self._attr_name == "Wtime Current Month":
-            return {"options": months}
-        elif self._attr_name == "Wtime Current Season":
-            return {"options": seasons}
-        elif self._attr_name == "Wtime Date":
-            return {"options": dates}
+        """No additional attributes."""
         return None
 
     async def async_update(self):
