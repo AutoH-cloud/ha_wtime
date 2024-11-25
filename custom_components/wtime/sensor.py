@@ -46,6 +46,7 @@ class WtimeSensor(SensorEntity):
         else:
             season = "Fall"
 
+        # Match sensor types to output
         if self._attr_name == "Wtime Week Day":
             return now.strftime("%A")
         elif self._attr_name == "Wtime Week Day Short":
@@ -65,7 +66,7 @@ class WtimeSensor(SensorEntity):
             "July", "August", "September", "October", "November", "December"
         ]
         seasons = ["Winter", "Spring", "Summer", "Fall"]
-        dates = [f"{i}" for i in range(1, 32)]  # 1 to 31
+        dates = [f"{i}" for i in range(1, 32)]  # Assuming all days (date sensor)
 
         if self._attr_name == "Wtime Current Month":
             return {"options": months}
@@ -74,7 +75,3 @@ class WtimeSensor(SensorEntity):
         elif self._attr_name == "Wtime Date":
             return {"options": dates}
         return None
-
-    async def async_update(self):
-        """Update the sensor state."""
-        self._attr_native_value = self.native_value
