@@ -18,32 +18,48 @@ Welcome to the **Wtime** custom integration for Home Assistant! This integration
 
 ## **Installation Instructions**
 
-### **Step 1: Add the Custom Repository to HACS**
-1. **Install HACS**:  
-   If you don’t have HACS installed yet, follow the [HACS Installation Guide](https://hacs.xyz/docs/installation/installation).
+### **Option 1: Use the Quick Install Button**
+Click the button below to open Home Assistant and navigate directly to the **HACS > Custom Repositories** page. Add the repository URL and select "Integration."
 
-2. **Add the Repository**:  
-   - Open **HACS** in Home Assistant.
-   - Go to **"Integrations"**.
-   - Click the three dots in the top-right and select **"Custom repositories"**.
-   - Add the following repository:
-     ```
-     https://github.com/AutoH-cloud/ha_wtime
-     ```
-   - Select **"Integration"** as the category and click **"Add"**.
-
-3. **Install Wtime**:  
-   - Locate **Wtime** in the HACS Integrations section.
-   - Click **"Install"** and follow the instructions.
-
-4. **Restart Home Assistant**:  
-   - Restart Home Assistant to activate the integration.
+[![Open HACS Repository](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?repository_url=https://github.com/AutoH-cloud/ha_wtime&category=integration)
 
 ---
 
-### **Step 2: Set Up the Wtime Integration**
+### **Option 2: Manual Installation via HACS**
+1. Open the **HACS** section of Home Assistant.
+2. In **Integrations**, click the **"Explore & Add Repositories"** button in the bottom-right corner.
+3. Search for **"Wtime"** in the search bar.
+4. If it doesn’t appear, add the repository manually:
+   - Go to **Settings > Custom Repositories**.
+   - Paste the following URL into the **Repository URL** field:
+     ```
+     https://github.com/AutoH-cloud/ha_wtime
+     ```
+   - Select **"Integration"** as the category and click **Add**.
+5. Once added, return to the **Integrations** page and install **Wtime**.
+6. Restart Home Assistant when prompted.
+
+---
+
+### **Step 3: Set Up the Wtime Integration**
 
 1. **Add Integration**:  
    - Go to **Settings** > **Devices & Services** > **Integrations**.
    - Click **"Add Integration"** and search for **Wtime**.
    - Follow the prompts to complete the setup.
+
+2. **Sensors Configuration (Optional)**:  
+   Add the following to your `configuration.yaml` for additional customization:
+
+   ```yaml
+   sensor:
+     - platform: wtime
+       name: "Current Date"
+     - platform: wtime
+       name: "Current Time"
+     - platform: wtime
+       name: "Current Season"
+
+   binary_sensor:
+     - platform: wtime
+       name: "DST Status"
