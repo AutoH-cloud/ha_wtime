@@ -2,11 +2,12 @@ from datetime import datetime
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.const import SensorDeviceClass
 
 DOMAIN = "wtime"
 
 SENSORS = {
+    "wtime_date": {"format": "%B %d, %Y", "icon": "mdi:calendar"},
+    "wtime_date_numbers": {"format": "%x", "icon": "mdi:numeric"},
     "wtime_clock": {"format": "%-I:%M %p", "icon": "mdi:clock", "device_class": SensorDeviceClass.TIME},
     "wtime_week_day": {"format": "%A", "icon": "mdi:calendar-today"},
     "wtime_week_day_short": {"format": "%a", "icon": "mdi:calendar-today"},
@@ -26,14 +27,8 @@ class WtimeSensor(SensorEntity):
     def __init__(self, name, data, entry_id):
         self._attr_name = name.replace("_", " ").title()
         self._attr_unique_id = f"{entry_id}_{name}"
-        self._format = data.get("format")
-        self._attr_icon = data.get("icon")
-        self._device_class = data.get("device_class")
-
-    @property
-    def device_class(self):
-        """Return the device class of the sensor."""
-        return self._device_class
+        self._format = data["format"]
+        self._attr_icon = data["icon"]
 
     @property
     def native_value(self):
@@ -59,8 +54,6 @@ class WtimeSensor(SensorEntity):
             return now.strftime("%B")
         elif self._attr_name == "Wtime Current Season":
             return season
-        elif self._attr_name == "Wtime Clock":
-            return now.strftime(self._format)
         else:
             return now.strftime(self._format)
 
@@ -72,14 +65,14 @@ class WtimeSensor(SensorEntity):
             "July", "August", "September", "October", "November", "December"
         ]
         seasons = ["Winter", "Spring", "Summer", "Fall"]
-        weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        dates = [f"{i}" for i in range(1, 32)]  # 1 to 31
 
         if self._attr_name == "Wtime Current Month":
             return {"options": months}
         elif self._attr_name == "Wtime Current Season":
             return {"options": seasons}
-        elif self._attr_name in ["Wtime Week Day", "Wtime Week Day Short"]:
-            return {"options": weekdays}
+        elif self._attr_name == "Wtime Date":
+            return {"options": dates}
         return None
 
     async def async_update(self):
