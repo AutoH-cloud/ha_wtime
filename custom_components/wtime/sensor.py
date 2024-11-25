@@ -29,24 +29,13 @@ class WtimeSensor(SensorEntity):
         self._attr_unique_id = f"{entry_id}_{name}"
         self._format = data["format"]
         self._attr_icon = data["icon"]
-        self._state = None
 
     @property
     def native_value(self):
         """Return the state of the sensor."""
-        months = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December",
-        ]
-        seasons = ["Winter", "Spring", "Summer", "Fall"]
-        weekdays_short = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-        weekdays_long = [
-            "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
-        ]
-
         now = datetime.now()
         month = now.month
-        weekday = (now.weekday() + 1) % 7  # Adjust for Sunday start (corrects offset)
+        weekday = (now.weekday() + 1) % 7  # Adjust for Sunday start
 
         # Determine the current season based on the month
         if month in [12, 1, 2]:
@@ -58,12 +47,13 @@ class WtimeSensor(SensorEntity):
         else:
             season = "Fall"
 
+        # Match sensor types to output
         if self._attr_name == "Wtime Week Day":
-            return weekdays_long[weekday]
+            return now.strftime("%A")
         elif self._attr_name == "Wtime Week Day Short":
-            return weekdays_short[weekday]
+            return now.strftime("%a")
         elif self._attr_name == "Wtime Current Month":
-            return months[month - 1]
+            return now.strftime("%B")
         elif self._attr_name == "Wtime Current Season":
             return season
         else:
@@ -71,27 +61,18 @@ class WtimeSensor(SensorEntity):
 
     @property
     def extra_state_attributes(self):
-        """Return additional attributes for dropdown support."""
-        months = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December",
-        ]
-        seasons = ["Winter", "Spring", "Summer", "Fall"]
-        weekdays_short = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-        weekdays_long = [
-            "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
-        ]
-
+        """Return dropdown options for certain sensors."""
         if self._attr_name == "Wtime Week Day":
-            return {"options": weekdays_long}
+            return {"options": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]}
         elif self._attr_name == "Wtime Week Day Short":
-            return {"options": weekdays_short}
+            return {"options": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]}
         elif self._attr_name == "Wtime Current Month":
-            return {"options": months}
+            return {
+                "options": [
+                    "January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"
+                ]
+            }
         elif self._attr_name == "Wtime Current Season":
-            return {"options": seasons}
+            return {"options": ["Winter", "Spring", "Summer", "Fall"]}
         return None
-
-    async def async_update(self):
-        """Update the sensor state."""
-        self._state = self.native_value
