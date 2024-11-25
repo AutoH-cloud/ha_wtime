@@ -1,14 +1,14 @@
 {
   "domain": "wtime",
   "name": "WTime",
-  "version": "0.5.3.6",
+  "version": "0.5.3.7",
   "documentation": "https://github.com/AutoH-cloud/ha_WTime",
   "requirements": [],
   "dependencies": [],
   "codeowners": ["@autoh.cloud"],
   "iot_class": "local_polling",
   "config_flow": true,
-  "config_entry_type": [],
+ "config_entry_type": "single",
   "single_config_entry": "true",
   "icon": []
 }
