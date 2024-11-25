@@ -1,7 +1,7 @@
 {
   "domain": "wtime",
   "name": "WTime",
-  "version": "0.5.2.3",
+  "version": "0.5.3.0",
   "documentation": "https://github.com/AutoH-cloud/ha_WTime",
   "requirements": [],
   "dependencies": [],
