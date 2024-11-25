@@ -5,14 +5,26 @@ from homeassistant.core import HomeAssistant
 
 DOMAIN = "wtime"
 
+# Define possible states
+MONTHS = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+]
+
+SEASONS = ["Winter", "Spring", "Summer", "Fall"]
+
+WEEKDAYS = [
+    "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+]
+
 SENSORS = {
     "wtime_date": {"format": "%B %d, %Y", "icon": "mdi:calendar"},
-    "wtime_date_numbers": {"format": "%x", "icon": "mdi:numeric"},
+    "wtime_date_short": {"format": "%x", "icon": "mdi:numeric"},
     "wtime_clock": {"format": "%-I:%M %p", "icon": "mdi:clock"},
-    "wtime_week_day": {"format": "%A", "icon": "mdi:calendar-today"},
-    "wtime_week_day_short": {"format": "%a", "icon": "mdi:calendar-today"},
-    "wtime_current_month": {"format": "%B", "icon": "mdi:calendar-month"},
-    "wtime_current_season": {"format": None, "icon": "mdi:weather-partly-cloudy"},
+    "wtime_weekday": {"format": "%A", "icon": "mdi:calendar-today", "possible_states": WEEKDAYS},
+    "wtime_weekday_short": {"format": "%a", "icon": "mdi:calendar-today"},
+    "wtime_current_month": {"format": "%B", "icon": "mdi:calendar-month", "possible_states": MONTHS},
+    "wtime_current_season": {"format": None, "icon": "mdi:weather-partly-cloudy", "possible_states": SEASONS},
 }
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
@@ -29,6 +41,7 @@ class WtimeSensor(SensorEntity):
         self._attr_unique_id = f"{entry_id}_{name}"
         self._format = data["format"]
         self._attr_icon = data["icon"]
+        self._possible_states = data.get("possible_states", None)
 
     @property
     def native_value(self):
@@ -46,9 +59,9 @@ class WtimeSensor(SensorEntity):
         else:
             season = "Fall"
 
-        if self._attr_name == "Wtime Week Day":
+        if self._attr_name == "Wtime Weekday":
             return now.strftime("%A")
-        elif self._attr_name == "Wtime Week Day Short":
+        elif self._attr_name == "Wtime Weekday Short":
             return now.strftime("%a")
         elif self._attr_name == "Wtime Current Month":
             return now.strftime("%B")
@@ -59,8 +72,11 @@ class WtimeSensor(SensorEntity):
 
     @property
     def extra_state_attributes(self):
-        """No additional attributes."""
-        return None
+        """Add possible states as attributes."""
+        attributes = {}
+        if self._possible_states:
+            attributes["possible_states"] = self._possible_states
+        return attributes
 
     async def async_update(self):
         """Update the sensor state."""
