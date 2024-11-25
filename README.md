@@ -63,3 +63,9 @@ Click the button below to open Home Assistant and navigate directly to the **HAC
    binary_sensor:
      - platform: wtime
        name: "DST Status"
+
+
+  # Support
+If you found this project helpful and would like to support its development, consider buying me a coffee! ☕
+
+<div align="center"> <a href="https://buymeacoffee.com/yoely0966" target="_blank"> <img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me a Coffee" style="height: 50px; width: auto;"> </a> </div> ```
