@@ -5,7 +5,6 @@ from homeassistant.core import HomeAssistant
 
 DOMAIN = "wtime"
 
-# Define possible states
 MONTHS = [
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
