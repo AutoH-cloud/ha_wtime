@@ -3,7 +3,6 @@
 DOMAIN = "wtime"
 DEFAULT_NAME = "WTime"
 
-# Sensor types
 SENSOR_TYPES = {
     "wtime_date": "Date",
     "wtime_time": "Time",
