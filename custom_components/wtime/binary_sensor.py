@@ -16,16 +16,16 @@ class WTimeDSTBinarySensor(BinarySensorEntity):
         """Initialize the DST sensor."""
         self._attr_name = "WTime DST Status"
         self._attr_unique_id = f"{entry_id}_dst_active"
-        self._timezone = pytz.timezone(timezone)  # Use Home Assistant's timezone
+        self._timezone = pytz.timezone(timezone)
         self._attr_is_on = self._check_dst()
 
     def _check_dst(self) -> bool:
         """Check if Daylight Saving Time (DST) is active."""
         try:
             now = datetime.now(self._timezone)
-            dst_offset = now.dst()  # Get DST offset
+            dst_offset = now.dst()
             _LOGGER.debug(f"Current time: {now}, DST offset: {dst_offset}")
-            return dst_offset is not None and dst_offset != timedelta(0)  # DST active if offset is non-zero
+            return dst_offset is not None and dst_offset != timedelta(0)
         except Exception as e:
             _LOGGER.error(f"Error checking DST status: {e}")
             return False
@@ -42,7 +42,7 @@ class WTimeDSTBinarySensor(BinarySensorEntity):
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
     """Set up the WTime DST binary sensor."""
-    # Retrieve timezone from Home Assistant configuration
+
     timezone = hass.config.time_zone or "UTC"
     _LOGGER.debug(f"Setting up WTimeDSTBinarySensor with timezone: {timezone}")
     async_add_entities([WTimeDSTBinarySensor(entry.entry_id, timezone)])
