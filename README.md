@@ -8,7 +8,7 @@
 
 ## **Available Sensors**
 
-- **Clock**: Displays the current time in a 12-hour format (e.g., 1:00 AM).
+- **Clock**: Displays the current time in a 12 and in 24-hour format, with and without seconds (updated in real time).
 - **Date**: Displays the current date (e.g., December 1, 2024).
 - **Date (Short)**: Displays the current date in numeric format (e.g., 12/01/24).
 - **Current Month**: Displays the current month (useful for automations).
