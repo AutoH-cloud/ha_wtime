@@ -1,0 +1,25 @@
+{
+    "title": "Wtime",
+    "config": {
+        "step": {
+            "user": {
+                "title": "Set up Wtime",
+                "description": "This integration allows you to add Wtime sensors to Home Assistant. Follow the prompts to complete the setup."
+            }
+        },
+        "abort": {
+            "single_instance_allowed": "Only one instance of Wtime can be added."
+        },
+        "error": {
+            "unknown": "An unknown error occurred. Please try again."
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Configure Wtime Options",
+                "description": "Modify the settings for Wtime sensors as needed."
+            }
+        }
+    }
+}
