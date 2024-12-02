@@ -1,5 +1,6 @@
 {
   "name": "WTime Sensors",
   "description": "DST status and other date/time sensors",
-  "render_readme": true
+  "render_readme": true,
+  "icon": "images/Icon.png"
 }
