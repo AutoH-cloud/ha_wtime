@@ -118,7 +118,20 @@ action:
 mode: single
 ```
 
-
+To disable recording history and lookback for the clock sensors, add the below in the ```configuration.yaml``` file.
+```
+recorder:
+  exclude:
+    entities:
+      - sensor.wtime_12hr_clock
+      - sensor.wtime_12hr_clock_with_seconds
+      - sensor.wtime_24hr_clock
+      - sensor.wtime_24hr_clock_with_seconds
+      - sensor.wtime_date
+      - sensor.wtime_date_short
+      - sensor.wtime_weekday
+      - sensor.wtime_weekday_short
+```
 
   # Support
 If you found this project helpful and would like to support its development, consider buying me a coffee! ☕
