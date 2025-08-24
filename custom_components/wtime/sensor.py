@@ -260,10 +260,12 @@ class WtimeSensor(SensorEntity):
     """Representation of a WTime sensor."""
 
     _attr_entity_category = EntityCategory.DIAGNOSTIC
+    _attr_should_poll = False  # we manage our own timers
 
     def __init__(self, sensor_key: str, meta: Dict[str, Any], entry_id: str) -> None:
         self._key = sensor_key
         self._meta = meta
+        self._entry_id = entry_id  # keep the config_entry id so we can attach to the device
         self._attr_name = sensor_key.replace("_", " ").title()
         self._attr_unique_id = f"{entry_id}_{sensor_key}"
         self._attr_icon = meta.get("icon")
@@ -277,8 +279,15 @@ class WtimeSensor(SensorEntity):
         # Device class + options for ENUM sensors
         self._attr_options = None
         self._device_class = None
-        if meta.get("device_class") == "enum" and SensorDeviceClass is not None:
-            self._device_class = SensorDeviceClass.ENUM
+        if meta.get("device_class") == "enum":
+            # prefer _attr_device_class for newer HA, keep property for back-compat
+            if SensorDeviceClass is not None:
+                self._attr_device_class = SensorDeviceClass.ENUM
+                self._device_class = SensorDeviceClass.ENUM
+            else:
+                # string fallback for very old cores
+                self._attr_device_class = "enum"  # type: ignore[assignment]
+                self._device_class = "enum"       # keep property in sync
             self._attr_options = list(meta.get("options") or [])
 
         # Update cadence
@@ -293,6 +302,7 @@ class WtimeSensor(SensorEntity):
     # ---- HA properties ----
     @property
     def device_class(self) -> Optional[str]:
+        # Keep your existing property for compatibility with older cores
         return self._device_class
 
     @property
@@ -302,6 +312,16 @@ class WtimeSensor(SensorEntity):
     @property
     def native_value(self) -> Any:
         return self._attr_native_value
+
+    @property
+    def device_info(self) -> Dict[str, Any]:
+        """Attach this entity to the WTime device so it shows under the integration and inherits Area."""
+        return {
+            "identifiers": {(DOMAIN, self._entry_id)},
+            "name": "WTime",
+            "manufacturer": "AutoH Cloud",
+            "model": "WTime Virtual",
+        }
 
     async def async_added_to_hass(self) -> None:
         """Kick off periodic updates with optional boundary alignment."""
@@ -395,8 +415,7 @@ class WtimeSensor(SensorEntity):
         # Month number rich attributes
         if self._key == "wtime_month_number":
             month_idx = now.month
-            # month length (simple, not leap-year aware for February fix below)
-            # We'll calculate accurately:
+            # month length (accurate for Feb/leap)
             if month_idx == 12:
                 next_month_first = date(now.year + 1, 1, 1)
             else:
