@@ -1,10 +1,27 @@
 {
-  "title": "WTime",
   "config": {
     "step": {
       "user": {
-        "title": "WTime Configuration",
-        "description": "No configuration needed. Click Submit to add."
+        "title": "Set up WTime",
+        "description": "Choose where WTime should appear.",
+        "data": {
+          "area_id": "Area"
+        }
+      }
+    },
+    "error": {},
+    "abort": {
+      "single_instance_allowed": "WTime is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "WTime Sensors",
+        "description": "Below is a list of all WTime sensors with their current state.",
+        "data": {
+          "entities": "Entities"
+        }
       }
     }
   }
