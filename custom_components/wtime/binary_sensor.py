@@ -1,33 +1,39 @@
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from datetime import datetime, timedelta
-import pytz
+from homeassistant.util import dt as dt_util
+from datetime import timedelta
 import logging
 
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = "wtime"
 
+
+def _now_local():
+    """Return HA's current local time as an aware datetime."""
+    # dt_util.now() returns an aware datetime in Home Assistant's configured timezone.
+    return dt_util.now()
+
+
 class WTimeDSTBinarySensor(BinarySensorEntity):
     """Representation of a WTime DST binary sensor."""
 
-    def __init__(self, entry_id: str, timezone: str):
+    def __init__(self, entry_id: str):
         """Initialize the DST sensor."""
         self._attr_name = "WTime DST Status"
         self._attr_unique_id = f"{entry_id}_dst_active"
-        self._timezone = pytz.timezone(timezone)
         self._attr_is_on = self._check_dst()
 
     def _check_dst(self) -> bool:
         """Check if Daylight Saving Time (DST) is active."""
         try:
-            now = datetime.now(self._timezone)
+            now = _now_local()
             dst_offset = now.dst()
-            _LOGGER.debug(f"Current time: {now}, DST offset: {dst_offset}")
+            _LOGGER.debug("Current local time: %s, DST offset: %s", now, dst_offset)
             return dst_offset is not None and dst_offset != timedelta(0)
-        except Exception as e:
-            _LOGGER.error(f"Error checking DST status: {e}")
+        except Exception as err:
+            _LOGGER.error("Error checking DST status: %s", err)
             return False
 
     @property
@@ -43,22 +49,21 @@ class WTimeDSTBinarySensor(BinarySensorEntity):
 class WTimeWeekdayBinarySensor(BinarySensorEntity):
     """Representation of a WTime Weekday binary sensor."""
 
-    def __init__(self, entry_id: str, timezone: str):
+    def __init__(self, entry_id: str):
         """Initialize the Weekday sensor."""
         self._attr_name = "WTime Is Weekday"
         self._attr_unique_id = f"{entry_id}_weekday"
-        self._timezone = pytz.timezone(timezone)
         self._attr_is_on = self._check_weekday()
 
     def _check_weekday(self) -> bool:
-        """Check if today is a weekday."""
+        """Check if today is a weekday (Mon–Fri)."""
         try:
-            now = datetime.now(self._timezone)
-            is_weekday = now.weekday() < 5  # Monday (0) to Friday (4)
-            _LOGGER.debug(f"Current time: {now}, Is weekday: {is_weekday}")
+            now = _now_local()
+            is_weekday = now.weekday() < 5  # Monday (0) .. Friday (4)
+            _LOGGER.debug("Current local time: %s, Is weekday: %s", now, is_weekday)
             return is_weekday
-        except Exception as e:
-            _LOGGER.error(f"Error checking weekday status: {e}")
+        except Exception as err:
+            _LOGGER.error("Error checking weekday status: %s", err)
             return False
 
     @property
@@ -74,22 +79,21 @@ class WTimeWeekdayBinarySensor(BinarySensorEntity):
 class WTimeWeekendBinarySensor(BinarySensorEntity):
     """Representation of a WTime Weekend binary sensor."""
 
-    def __init__(self, entry_id: str, timezone: str):
+    def __init__(self, entry_id: str):
         """Initialize the Weekend sensor."""
         self._attr_name = "WTime is Weekend"
         self._attr_unique_id = f"{entry_id}_weekend"
-        self._timezone = pytz.timezone(timezone)
         self._attr_is_on = self._check_weekend()
 
     def _check_weekend(self) -> bool:
-        """Check if today is a weekend."""
+        """Check if today is a weekend (Sat–Sun)."""
         try:
-            now = datetime.now(self._timezone)
-            is_weekend = now.weekday() >= 5  # Saturday (5) and Sunday (6)
-            _LOGGER.debug(f"Current time: {now}, Is weekend: {is_weekend}")
+            now = _now_local()
+            is_weekend = now.weekday() >= 5  # Saturday (5), Sunday (6)
+            _LOGGER.debug("Current local time: %s, Is weekend: %s", now, is_weekend)
             return is_weekend
-        except Exception as e:
-            _LOGGER.error(f"Error checking weekend status: {e}")
+        except Exception as err:
+            _LOGGER.error("Error checking weekend status: %s", err)
             return False
 
     @property
@@ -104,12 +108,15 @@ class WTimeWeekendBinarySensor(BinarySensorEntity):
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
     """Set up the WTime binary sensors."""
+    _LOGGER.debug(
+        "Setting up WTimeBinarySensors with HA timezone: %s",
+        hass.config.time_zone or "UTC",
+    )
 
-    timezone = hass.config.time_zone or "UTC"
-    _LOGGER.debug(f"Setting up WTimeBinarySensors with timezone: {timezone}")
-
-    async_add_entities([
-        WTimeDSTBinarySensor(entry.entry_id, timezone),
-        WTimeWeekdayBinarySensor(entry.entry_id, timezone),
-        WTimeWeekendBinarySensor(entry.entry_id, timezone),
-    ])
+    async_add_entities(
+        [
+            WTimeDSTBinarySensor(entry.entry_id),
+            WTimeWeekdayBinarySensor(entry.entry_id),
+            WTimeWeekendBinarySensor(entry.entry_id),
+        ]
+    )
