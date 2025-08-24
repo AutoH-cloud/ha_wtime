@@ -8,6 +8,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.util import dt as dt_util
 from homeassistant.helpers.event import async_track_time_change
+from homeassistant.helpers.entity import EntityCategory  # <-- added
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -141,16 +142,29 @@ class WTimeDSTBinarySensor(BinarySensorEntity):
     """DST status sensor with transition attributes."""
 
     _attr_name = "WTime DST Status"
+    _attr_entity_category = EntityCategory.DIAGNOSTIC  # <-- added
+    _attr_should_poll = False  # <-- added
 
     def __init__(self, entry_id: str) -> None:
         self._attr_unique_id = f"{entry_id}_dst_active"
         self._attr_is_on = False
         self._attrs: dict[str, str | bool | None] = {}
         self._unsub_time = None
+        self._entry_id = entry_id  # for device attachment
 
     @property
     def extra_state_attributes(self) -> dict:
         return self._attrs
+
+    @property
+    def device_info(self) -> dict:
+        """Attach to the WTime device so it shows under the integration and inherits Area."""
+        return {
+            "identifiers": {(DOMAIN, self._entry_id)},
+            "name": "WTime",
+            "manufacturer": "AutoH Cloud",
+            "model": "WTime Virtual",
+        }
 
     async def async_added_to_hass(self) -> None:
         await super().async_added_to_hass()
@@ -235,7 +249,6 @@ class WTimeDSTBinarySensor(BinarySensorEntity):
             # season_end (for the *last* season) was the previous change if it went off
             if prev_change is not None and prev_is_dst is True:
                 # previous change turned DST off -> this is last season_end
-                # we still expose it as season_end (most recent end)
                 season_end = prev_change
                 # and to be nice, also compute the last season_start (prev before that)
                 last_start = _find_transition_backward(season_end - timedelta(minutes=1))
@@ -261,10 +274,22 @@ class WTimeWeekdayBinarySensor(BinarySensorEntity):
     """Simple weekday sensor (Mon–Fri)."""
 
     _attr_name = "WTime Is Weekday"
+    _attr_entity_category = EntityCategory.DIAGNOSTIC  # <-- added
+    _attr_should_poll = False  # <-- added
 
     def __init__(self, entry_id: str) -> None:
         self._attr_unique_id = f"{entry_id}_weekday"
         self._attr_is_on = False
+        self._entry_id = entry_id  # for device attachment
+
+    @property
+    def device_info(self) -> dict:
+        return {
+            "identifiers": {(DOMAIN, self._entry_id)},
+            "name": "WTime",
+            "manufacturer": "AutoH Cloud",
+            "model": "WTime Virtual",
+        }
 
     async def async_added_to_hass(self) -> None:
         self._update_and_write()
@@ -283,11 +308,23 @@ class WTimeWeekdayBinarySensor(BinarySensorEntity):
 class WTimeWeekendBinarySensor(BinarySensorEntity):
     """Simple weekend sensor (Sat–Sun)."""
 
-    _attr_name = "WTime is Weekend"
+    _attr_name = "WTime Is Weekend"
+    _attr_entity_category = EntityCategory.DIAGNOSTIC  # <-- added
+    _attr_should_poll = False  # <-- added
 
     def __init__(self, entry_id: str) -> None:
         self._attr_unique_id = f"{entry_id}_weekend"
         self._attr_is_on = False
+        self._entry_id = entry_id  # for device attachment
+
+    @property
+    def device_info(self) -> dict:
+        return {
+            "identifiers": {(DOMAIN, self._entry_id)},
+            "name": "WTime",
+            "manufacturer": "AutoH Cloud",
+            "model": "WTime Virtual",
+        }
 
     async def async_added_to_hass(self) -> None:
         self._update_and_write()
